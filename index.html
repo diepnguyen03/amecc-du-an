@@ -1297,6 +1297,13 @@ function toggleOvFilter(dim, bucket){
 }
 document.getElementById('btnClearFilter').addEventListener('click', ()=>{ ovFilter=null; renderOverviewTable(); });
 
+function blueGradient(t){
+  const c1=[222,235,247], c2=[15,58,102];
+  const r = Math.round(c1[0]+(c2[0]-c1[0])*t), g = Math.round(c1[1]+(c2[1]-c1[1])*t), b = Math.round(c1[2]+(c2[2]-c1[2])*t);
+  return `rgb(${r},${g},${b})`;
+}
+function blueGradText(t){ return t>0.55? '#fff':'var(--ink)'; }
+
 function renderOverviewTable(){
   const keys = overviewKeys();
   const tbody = document.getElementById('tblOverview');
@@ -1315,8 +1322,8 @@ function renderOverviewTable(){
     clearBtn.classList.remove('show');
   }
 
-  tbody.innerHTML = '';
-  keys.forEach(k=>{
+  // Xác định trước các dòng sẽ hiển thị (theo filter) để tính min/max cho gradient
+  const rows = keys.map(k=>{
     const p = DATA.projects[k];
     const pct = p.cost_total? p.performed_total/p.cost_total*100:0;
     const bBucket = budgetBucket(pct);
@@ -1326,24 +1333,32 @@ function renderOverviewTable(){
     const payPct = p.revenue? p.settled_total/p.revenue*100:0;
     const payBkt = paymentBucket4(payPct);
     const weightDone = (p.weight_kg||0)*((progPct||0)/100);
-
     let match = true;
     if(ovFilter){
       if(ovFilter.dim==='progress') match = (pBucket===ovFilter.bucket);
       else if(ovFilter.dim==='budget') match = (bBucket===ovFilter.bucket);
       else match = (payBkt===ovFilter.bucket);
     }
-    if(ovFilter && !match) return; // ẩn hẳn dòng không khớp, chỉ hiện dòng thỏa mãn
+    return {k,p,pct,bBucket,progPct,pBucket,margin,weightDone,match};
+  }).filter(r=> !ovFilter || r.match);
+
+  const revMax = Math.max(...rows.map(r=>r.p.revenue),0), revMin = Math.min(...rows.map(r=>r.p.revenue),revMax);
+  const marginMax = Math.max(...rows.map(r=>r.margin),0), marginMin = Math.min(...rows.map(r=>r.margin),marginMax);
+
+  tbody.innerHTML = '';
+  rows.forEach(({k,p,pct,bBucket,progPct,pBucket,margin,weightDone})=>{
     const bChip = bBucket==='red'?'c-red':(bBucket==='amber'?'c-amber':'c-green');
     const pChip = pBucket==='red'?'c-red':(pBucket==='amber'?'c-amber':'c-green');
     const bLabel = bBucket==='red'?'Vượt NS':(bBucket==='amber'?'Sát NS':'Còn dư');
     const pLabel = pBucket==='red'?'Chậm':(pBucket==='amber'?'Đang triển khai':'Đúng KH');
+    const tRev = revMax>revMin ? (p.revenue-revMin)/(revMax-revMin) : 0.5;
+    const tMargin = marginMax>marginMin ? (margin-marginMin)/(marginMax-marginMin) : 0.5;
 
     tbody.innerHTML += `<tr>
       <td>${k}</td>
       <td>${(p.client||'')+' '+(p.country||'')}</td>
-      <td class="mono">${fmtFull(p.revenue)}</td>
-      <td class="mono">${margin.toFixed(1)}%</td>
+      <td class="mono" style="background:${blueGradient(tRev)};color:${blueGradText(tRev)}">${fmtFull(p.revenue)}</td>
+      <td class="mono" style="background:${blueGradient(tMargin)};color:${blueGradText(tMargin)}">${margin.toFixed(1)}%</td>
       <td class="mono">${p.weight_kg? fmtFull(p.weight_kg):'-'}</td>
       <td class="mono">${fmtFull(p.cost_total)}</td>
       <td class="mono">${p.weight_kg? fmtFull(weightDone):'-'}</td>
