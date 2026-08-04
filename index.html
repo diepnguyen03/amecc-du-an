@@ -154,58 +154,39 @@ tbody tr.highlighted{background:#eef6f1}
     <span class="placeholder-badge">Tiến độ: số liệu minh họa</span>
   </div>
 
-  <div class="grid row3" style="margin-top:16px">
+  <div class="grid row2" style="margin-top:16px">
     <div class="card">
-      <h2><span class="d"></span>Khối lượng thực hiện vs Kế hoạch theo tháng</h2>
+      <h2><span class="d"></span>Lũy kế khối lượng thực hiện vs Kế hoạch</h2>
       <div class="desc" id="ovWeightMonthlyDesc">Tổng hợp các dự án theo bộ lọc Năm. Đơn vị: Kg.</div>
-      <div class="chartbox lg"><canvas id="chartOvWeightMonthly"></canvas></div>
+      <div class="chartbox lg"><canvas id="chartOvWeightCumulative"></canvas></div>
     </div>
-    <div class="card">
-      <h2><span class="d"></span>Số dự án theo % hoàn thành kế hoạch tiến độ</h2>
-      <div class="desc">Bấm vào 1 cột để lọc bảng bên dưới. Đỏ &lt;75% (chậm) · Vàng 75–99% (đang triển khai) · Xanh =100% (đúng kế hoạch).</div>
-      <div class="chartbox lg"><canvas id="chartOvProgress"></canvas></div>
-    </div>
-    <div class="card">
-      <h2><span class="d"></span>Tổng khối lượng vs Khối lượng thực hiện theo dự án</h2>
-      <div class="desc">Đơn vị: Kg.</div>
-      <div class="chartbox lg"><canvas id="chartOvWeightByProject"></canvas></div>
-    </div>
-  </div>
-
-  <div class="grid row2">
-    <div class="card">
-      <h2><span class="d"></span>Số dự án theo % sử dụng ngân sách</h2>
-      <div class="desc">Bấm vào 1 cột để lọc bảng bên dưới. Xanh &lt;75% (còn dư) · Vàng 75–100% (sát ngân sách) · Đỏ &gt;100% (vượt ngân sách).</div>
-      <div class="chartbox lg"><canvas id="chartOvBudget"></canvas></div>
-    </div>
-    <div class="card">
-      <h2><span class="d" style="background:var(--amber)"></span>Ngân sách vs Ngân sách đã sử dụng theo dự án</h2>
-      <div class="desc">Đơn vị: VNĐ.</div>
-      <div class="chartbox lg"><canvas id="chartOvBudgetVsUsed"></canvas></div>
-    </div>
-  </div>
-
-  <div class="grid row3">
     <div class="card">
       <h2><span class="d" style="background:var(--done)"></span>Doanh thu tiền về vs Kế hoạch theo tháng</h2>
       <div class="desc">Cột <b style="color:var(--rework)">đỏ</b> = tháng có tiền về thực tế dưới kế hoạch.</div>
       <div class="chartbox lg"><canvas id="chartOvPlanActual"></canvas></div>
     </div>
+  </div>
+
+  <div class="grid row2">
     <div class="card">
-      <h2><span class="d" style="background:var(--steel)"></span>Số dự án theo tỷ lệ đã thanh toán</h2>
-      <div class="desc">Bấm vào 1 cột để lọc bảng bên dưới. &lt;50% · 50–70% · 70–99% · Đúng 100%.</div>
-      <div class="chartbox lg"><canvas id="chartOvPaymentBuckets"></canvas></div>
+      <h2><span class="d"></span>Phân loại dự án theo tiến độ &amp; ngân sách</h2>
+      <div class="desc">Bấm vào 1 dòng để lọc bảng bên dưới. Tiến độ: Đỏ &lt;75% · Vàng 75–99% · Xanh =100%. Ngân sách: Xanh &lt;75% · Vàng 75–100% · Đỏ &gt;100%.</div>
+      <div class="tablewrap">
+        <table id="tblOvClassify"></table>
+      </div>
     </div>
     <div class="card">
-      <h2><span class="d" style="background:var(--rework)"></span>Doanh thu HĐ vs Doanh thu đã thanh toán theo dự án</h2>
-      <div class="desc">Đơn vị: VNĐ.</div>
-      <div class="chartbox lg"><canvas id="chartOvRevVsPaid"></canvas></div>
+      <h2><span class="d"></span>Heatmap: % Hoàn thành tiến độ &amp; % Sử dụng ngân sách theo dự án</h2>
+      <div class="desc">Mỗi dòng = 1 dự án. Màu theo từng cột: tiến độ (đỏ=chậm, xanh=đúng KH), ngân sách (xanh=còn dư, đỏ=vượt).</div>
+      <div class="tablewrap">
+        <table id="tblOvHeat"></table>
+      </div>
     </div>
   </div>
 
   <div class="card">
     <h2><span class="d"></span>Danh sách dự án — Tổng quan</h2>
-    <div class="desc">Bảng tương tác với các chart phía trên — bấm vào cột chart để lọc, bấm "Bỏ lọc" để xem lại toàn bộ.</div>
+    <div class="desc">Bảng tương tác với các mục phía trên — bấm vào 1 dòng phân loại để lọc, bấm "Bỏ lọc" để xem lại toàn bộ.</div>
     <div class="heatctrl">
       <button class="clearfilter" id="btnClearFilter">✕ Bỏ lọc</button>
       <span id="filterStatus" style="font-size:11px;color:var(--muted)"></span>
@@ -1107,58 +1088,31 @@ function renderOverviewKPIs(){
   }
 }
 
-function renderOvWeightMonthlyChart(){
+function hexToRgbStr(hex){
+  hex = hex.replace('#','');
+  const r=parseInt(hex.substring(0,2),16), g=parseInt(hex.substring(2,4),16), b=parseInt(hex.substring(4,6),16);
+  return `${r},${g},${b}`;
+}
+
+function renderOvWeightCumulativeChart(){
   const keys = overviewKeys();
   const scopeTxt = selYear.value==='ALL' ? 'Toàn bộ' : `Các dự án bắt đầu năm ${selYear.value}`;
   document.getElementById('ovWeightMonthlyDesc').textContent = `${scopeTxt} (${keys.length} dự án). Đơn vị: Kg.`;
-  if(keys.length===0){ if(charts['chartOvWeightMonthly']) charts['chartOvWeightMonthly'].destroy(); return; }
+  if(keys.length===0){ if(charts['chartOvWeightCumulative']) charts['chartOvWeightCumulative'].destroy(); return; }
   const {months, plan, actual} = weightMonthly(keys);
-  mk('chartOvWeightMonthly', {
-    type:'bar',
+  let cp=0, ca=0;
+  const cumPlan=[], cumActual=[];
+  months.forEach((m,i)=>{ cp+=plan[i]; ca+=actual[i]; cumPlan.push(cp); cumActual.push(ca); });
+  mk('chartOvWeightCumulative', {
+    type:'line',
     data:{labels:months.map(m=>{const [y,mo]=m.split('-');return mo+'/'+y.slice(2);}),
       datasets:[
-        {label:'Kế hoạch', data:plan, backgroundColor:'#dce8f7', borderRadius:3},
-        {label:'Thực hiện', data:actual, backgroundColor:actual.map((v,i)=> v<plan[i]? C.rework : C.done), borderRadius:3},
+        {label:'Kế hoạch lũy kế', data:cumPlan, borderColor:C.muted, borderDash:[6,4], pointRadius:0, borderWidth:2, fill:false},
+        {label:'Thực hiện lũy kế', data:cumActual, borderColor:C.steel, backgroundColor:'rgba(46,111,176,.18)', fill:true, tension:.3, pointRadius:2, borderWidth:3},
       ]},
     options:{responsive:true,maintainAspectRatio:false,
       plugins:{legend:{position:'top',labels:{font:{size:10}}}, datalabels:{display:false}},
       scales:{y:{ticks:{callback:v=>fmt(v)}}, x:{ticks:{maxRotation:0,autoSkip:true,font:{size:9}}}}
-    }
-  });
-}
-
-function renderOvWeightByProjectChart(){
-  const keys = overviewKeys();
-  if(keys.length===0){ if(charts['chartOvWeightByProject']) charts['chartOvWeightByProject'].destroy(); return; }
-  const total = keys.map(k=>DATA.projects[k].weight_kg||0);
-  const done_ = keys.map(k=> (DATA.projects[k].weight_kg||0)*((PROGRESS[k]||0)/100));
-  mk('chartOvWeightByProject', {
-    type:'bar',
-    data:{labels:keys,
-      datasets:[
-        {label:'Tổng khối lượng', data:total, backgroundColor:'#dce8f7', borderRadius:4},
-        {label:'Khối lượng thực hiện', data:done_, backgroundColor:C.steel, borderRadius:4},
-      ]},
-    options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',
-      plugins:{legend:{position:'top',labels:{font:{size:10}}}, datalabels:{display:false}},
-      scales:{x:{ticks:{callback:v=>fmt(v)}}}
-    }
-  });
-}
-
-function renderOvBudgetVsUsedChart(){
-  const keys = overviewKeys();
-  if(keys.length===0){ if(charts['chartOvBudgetVsUsed']) charts['chartOvBudgetVsUsed'].destroy(); return; }
-  mk('chartOvBudgetVsUsed', {
-    type:'bar',
-    data:{labels:keys,
-      datasets:[
-        {label:'Dự toán', data:keys.map(k=>DATA.projects[k].cost_total), backgroundColor:'#dce8f7', borderRadius:5},
-        {label:'Ngân sách đã sử dụng', data:keys.map(k=>DATA.projects[k].performed_total), backgroundColor:C.steel, borderRadius:5},
-      ]},
-    options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',
-      plugins:{legend:{position:'top',labels:{font:{size:10}}}, datalabels:{display:false}},
-      scales:{x:{ticks:{callback:v=>fmt(v)}}}
     }
   });
 }
@@ -1194,108 +1148,69 @@ function renderOvPlanActualChart(){
   });
 }
 
-function renderOvPaymentBucketsChart(){
+function renderOvClassifyTable(){
   const keys = overviewKeys();
-  let counts = {p0:0,p50:0,p70:0,p100:0};
+  let pc = {red:0,amber:0,green:0}, bc = {red:0,amber:0,green:0};
   keys.forEach(k=>{
-    const p = DATA.projects[k];
-    const pct = p.revenue? p.settled_total/p.revenue*100:0;
-    counts[paymentBucket4(pct)]++;
-  });
-  mk('chartOvPaymentBuckets', {
-    type:'bar',
-    data:{labels:['<50%','50–70%','70–99%','Đúng 100%'],
-      datasets:[{data:[counts.p0,counts.p50,counts.p70,counts.p100], backgroundColor:[C.rework,C.amber,C.steelLt,C.done], borderRadius:8, barThickness:55}]},
-    options:{responsive:true,maintainAspectRatio:false,
-      onClick:(evt,elements)=>{
-        if(!elements.length) return;
-        const bucket = ['p0','p50','p70','p100'][elements[0].index];
-        toggleOvFilter('payment', bucket);
-      },
-      onHover:(evt,elements)=>{ evt.native.target.style.cursor = elements.length? 'pointer':'default'; },
-      plugins:{legend:{display:false},
-        datalabels:{anchor:'end',align:'top',font:{weight:'700',size:14},color:C.ink,formatter:v=>v}
-      },
-      scales:{y:{beginAtZero:true,ticks:{stepSize:1,precision:0},title:{display:true,text:'Số dự án'}}}
-    }
-  });
-}
-
-function renderOvRevVsPaidChart(){
-  const keys = overviewKeys();
-  if(keys.length===0){ if(charts['chartOvRevVsPaid']) charts['chartOvRevVsPaid'].destroy(); return; }
-  mk('chartOvRevVsPaid', {
-    type:'bar',
-    data:{labels:keys,
-      datasets:[
-        {label:'Doanh thu HĐ', data:keys.map(k=>DATA.projects[k].revenue), backgroundColor:'#dce8f7', borderRadius:4},
-        {label:'Doanh thu đã thanh toán', data:keys.map(k=>DATA.projects[k].settled_total), backgroundColor:C.steel, borderRadius:4},
-      ]},
-    options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',
-      plugins:{legend:{position:'top',labels:{font:{size:10}}}, datalabels:{display:false}},
-      scales:{x:{ticks:{callback:v=>fmt(v)}}}
-    }
-  });
-}
-
-function renderOvProgressChart(){
-  const keys = overviewKeys();
-  let counts = {red:0,amber:0,green:0};
-  keys.forEach(k=> counts[progressBucket(PROGRESS[k])]++ );
-  mk('chartOvProgress', {
-    type:'bar',
-    data:{labels:['Chậm (<75%)','Đang triển khai (75–99%)','Đúng kế hoạch (100%)'],
-      datasets:[{data:[counts.red,counts.amber,counts.green], backgroundColor:[C.rework,C.amber,C.done], borderRadius:8, barThickness:55}]},
-    options:{responsive:true,maintainAspectRatio:false,
-      onClick:(evt,elements)=>{
-        if(!elements.length) return;
-        const idx = elements[0].index;
-        const bucket = ['red','amber','green'][idx];
-        toggleOvFilter('progress', bucket);
-      },
-      onHover:(evt,elements)=>{ evt.native.target.style.cursor = elements.length? 'pointer':'default'; },
-      plugins:{legend:{display:false},
-        datalabels:{anchor:'end',align:'top',font:{weight:'700',size:14},color:C.ink,formatter:v=>v}
-      },
-      scales:{y:{beginAtZero:true,ticks:{stepSize:1,precision:0},title:{display:true,text:'Số dự án'}}}
-    }
-  });
-}
-
-function renderOvBudgetChart(){
-  const keys = overviewKeys();
-  let counts = {green:0,amber:0,red:0};
-  keys.forEach(k=>{
+    pc[progressBucket(PROGRESS[k]||0)]++;
     const p = DATA.projects[k];
     const pct = p.cost_total? p.performed_total/p.cost_total*100:0;
-    counts[budgetBucket(pct)]++;
+    bc[budgetBucket(pct)]++;
   });
-  mk('chartOvBudget', {
-    type:'bar',
-    data:{labels:['Còn dư (<75%)','Sát ngân sách (75–100%)','Vượt ngân sách (>100%)'],
-      datasets:[{data:[counts.green,counts.amber,counts.red], backgroundColor:[C.done,C.amber,C.rework], borderRadius:8, barThickness:55}]},
-    options:{responsive:true,maintainAspectRatio:false,
-      onClick:(evt,elements)=>{
-        if(!elements.length) return;
-        const idx = elements[0].index;
-        const bucket = ['green','amber','red'][idx];
-        toggleOvFilter('budget', bucket);
-      },
-      onHover:(evt,elements)=>{ evt.native.target.style.cursor = elements.length? 'pointer':'default'; },
-      plugins:{legend:{display:false},
-        datalabels:{anchor:'end',align:'top',font:{weight:'700',size:14},color:C.ink,formatter:v=>v}
-      },
-      scales:{y:{beginAtZero:true,ticks:{stepSize:1,precision:0},title:{display:true,text:'Số dự án'}}}
-    }
+  const rows = [
+    {level:'red', label:'Cần chú ý', progLabel:'Chậm (<75%)', budLabel:'Vượt NS (>100%)'},
+    {level:'amber', label:'Trung bình', progLabel:'Đang triển khai (75–99%)', budLabel:'Sát NS (75–100%)'},
+    {level:'green', label:'Tốt', progLabel:'Đúng KH (100%)', budLabel:'Còn dư (<75%)'},
+  ];
+  const colorMap = {red:C.rework, amber:C.amber, green:C.done};
+  let thead = '<thead><tr><th>Mức độ</th><th>Tiến độ</th><th>Ngân sách</th></tr></thead>';
+  let body = '<tbody>';
+  rows.forEach(r=>{
+    const activeP = ovFilter && ovFilter.dim==='progress' && ovFilter.bucket===r.level;
+    const activeB = ovFilter && ovFilter.dim==='budget' && ovFilter.bucket===r.level;
+    const rgb = hexToRgbStr(colorMap[r.level]);
+    body += `<tr>
+      <td style="font-weight:700;color:${colorMap[r.level]}">${r.label}</td>
+      <td class="bar-clickable" data-dim="progress" data-bucket="${r.level}" style="background:${activeP?colorMap[r.level]:'rgba('+rgb+',0.15)'};color:${activeP?'#fff':'var(--ink)'};font-weight:700;cursor:pointer">${pc[r.level]} dự án</td>
+      <td class="bar-clickable" data-dim="budget" data-bucket="${r.level}" style="background:${activeB?colorMap[r.level]:'rgba('+rgb+',0.15)'};color:${activeB?'#fff':'var(--ink)'};font-weight:700;cursor:pointer">${bc[r.level]} dự án</td>
+    </tr>`;
   });
+  body += '</tbody>';
+  const tbl = document.getElementById('tblOvClassify');
+  tbl.innerHTML = thead+body;
+  tbl.querySelectorAll('td.bar-clickable').forEach(td=>{
+    td.addEventListener('click', ()=>{ toggleOvFilter(td.dataset.dim, td.dataset.bucket); });
+  });
+}
+
+function renderOvHeatmap(){
+  const keys = overviewKeys();
+  let thead = '<thead><tr><th>Dự án</th><th>% Hoàn thành tiến độ</th><th>% Sử dụng ngân sách</th></tr></thead>';
+  let body = '<tbody>';
+  keys.forEach(k=>{
+    const p = DATA.projects[k];
+    const progPct = PROGRESS[k]||0;
+    const pct = p.cost_total? p.performed_total/p.cost_total*100:0;
+    const pBucket = progressBucket(progPct);
+    const bBucket = budgetBucket(pct);
+    const colorFor = b=> b==='red'?C.rework:(b==='amber'?C.amber:C.done);
+    const bgFor = b=> `rgba(${hexToRgbStr(colorFor(b))},0.78)`;
+    body += `<tr><td>${k}</td>
+      <td class="heatcell" style="background:${bgFor(pBucket)};color:#fff">${progPct}%</td>
+      <td class="heatcell" style="background:${bgFor(bBucket)};color:#fff">${pct.toFixed(1)}%</td>
+    </tr>`;
+  });
+  body += '</tbody>';
+  document.getElementById('tblOvHeat').innerHTML = thead+body;
 }
 
 function toggleOvFilter(dim, bucket){
   if(ovFilter && ovFilter.dim===dim && ovFilter.bucket===bucket){ ovFilter = null; }
   else { ovFilter = {dim, bucket}; }
+  renderOvClassifyTable();
   renderOverviewTable();
 }
-document.getElementById('btnClearFilter').addEventListener('click', ()=>{ ovFilter=null; renderOverviewTable(); });
+document.getElementById('btnClearFilter').addEventListener('click', ()=>{ ovFilter=null; renderOvClassifyTable(); renderOverviewTable(); });
 
 function blueGradient(t){
   const c1=[222,235,247], c2=[15,58,102];
@@ -1373,14 +1288,10 @@ function renderOverviewTable(){
 
 function renderOverviewAll(){
   renderOverviewKPIs();
-  renderOvWeightMonthlyChart();
-  renderOvProgressChart();
-  renderOvWeightByProjectChart();
-  renderOvBudgetChart();
-  renderOvBudgetVsUsedChart();
+  renderOvWeightCumulativeChart();
   renderOvPlanActualChart();
-  renderOvPaymentBucketsChart();
-  renderOvRevVsPaidChart();
+  renderOvClassifyTable();
+  renderOvHeatmap();
   renderOverviewTable();
 }
 renderOverviewAll();
