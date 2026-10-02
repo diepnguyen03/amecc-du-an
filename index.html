@@ -101,6 +101,8 @@ main{background:radial-gradient(1200px 420px at 18% -8%,rgba(43,127,255,.07),tra
 .tabs{display:flex;flex-direction:column;gap:2px;background:transparent;padding:0;border:0;position:static;margin-top:6px}
 .navgrp{display:flex;align-items:center;gap:7px;font-size:9.5px;font-weight:700;text-transform:uppercase;
   letter-spacing:.7px;color:rgba(255,255,255,.42);padding:14px 11px 6px}
+.mpsrc{display:none!important}
+.mpsrc code{background:rgba(0,0,0,.05);padding:1px 5px;border-radius:4px}
 .tabs button.top{font-size:14.5px!important;font-weight:700!important;letter-spacing:.5px;padding:12px 11px}
 .tabs button.sub{padding-left:26px}
 .tabs button.sub em{padding-left:0}
@@ -252,7 +254,21 @@ tbody tr.child td:first-child{padding-left:26px;color:#3C4C63;font-weight:500}
 .mono{font-family:'Inter',sans-serif;font-size:14px;font-weight:600;font-variant-numeric:tabular-nums;letter-spacing:-.01em}
 .chip{display:inline-block;padding:4px 11px;border-radius:20px;font-size:11.5px;font-weight:700;border:1px solid rgba(0,0,0,.10);letter-spacing:.1px}
 .c-amber{background:#FFE699;color:#1F3864;border-color:#D9A400}.c-red{background:#F8CBCB;color:#7B0D0D;border-color:#D96A6A}.c-green{background:#C6EFCE;color:#0B4F2A;border-color:#8FD6AB}.c-purple{background:#E6DEF8;color:#5B3FA0;border-color:#C9B8EE}.c-steel{background:#D9E8FF;color:#14539E;border-color:#A9CBF0}
-.tablewrap{max-height:460px;overflow:auto}
+.tablewrap{max-height:460px;overflow:auto;position:relative}
+/* ghim hàng tiêu đề và cột đầu cho các bảng ma trận trang Nhân sự */
+#mpMatrixAct thead th,#mpProjAct thead th,#mpMatrix thead th,
+#tblCcode thead th,#tblRecovery thead th,#tblUtilBuckets thead th,
+#tblCapTeam thead th,#tblCapStage thead th,#tblCapHeat thead th,#tblC4 thead th{
+  position:sticky;top:0;z-index:5}
+#mpMatrixAct th:first-child,#mpMatrixAct td:first-child,
+#mpProjAct th:first-child,#mpProjAct td:first-child,
+#mpMatrix th:first-child,#mpMatrix td:first-child,
+#tblCapHeat th:first-child,#tblCapHeat td:first-child{
+  position:sticky;left:0;z-index:4;background:#fff;box-shadow:1px 0 0 var(--line)}
+#mpMatrixAct thead th:first-child,#mpProjAct thead th:first-child,
+#mpMatrix thead th:first-child,#tblCapHeat thead th:first-child{z-index:7;background:var(--bg-2)}
+#mpMatrixAct tr.tot td:first-child,#mpProjAct tr.tot td:first-child,
+#mpMatrix tr.tot td:first-child{background:#EAF2FF}
 .note{font-size:11.5px;color:var(--muted);background:var(--bg-2);border:.5px solid var(--line);padding:11px 13px;border-radius:12px;margin-top:12px;line-height:1.6}
 .note.warn{background:#fef6e6;border-left-color:var(--amber);color:#8a5a10}
 .note b{color:var(--ink)}
@@ -552,14 +568,14 @@ html::-webkit-scrollbar,body::-webkit-scrollbar{display:none!important}
 .sctblwrap{overflow-x:auto;margin-top:10px;border:.5px solid var(--line);border-radius:10px}
 .sctbl{border-collapse:collapse;width:max-content;min-width:100%;font-family:'Inter',sans-serif;font-size:12.5px}
 .sctbl th,.sctbl td{padding:7px 9px;text-align:right;white-space:nowrap;border-bottom:1px solid #EEF2F8}
-.sctbl thead th{background:#EDF3FC;color:#1F2E45;font-weight:700;font-size:12px;border-bottom:2px solid #C2D3EC;
+.sctbl thead th{background:#006666;color:#fff;font-weight:700;font-size:12px;border-bottom:2px solid #C2D3EC;
   position:sticky;top:0;z-index:2}
 .sctbl th.lbl,.sctbl td.lbl{position:sticky;left:0;background:#fff;text-align:left;min-width:188px;font-weight:600;z-index:3}
-.sctbl thead th.lbl{background:#EDF3FC;z-index:4}
+.sctbl thead th.lbl{background:#006666;z-index:4}
 .sctbl tbody tr:last-child td{border-bottom:0}
 .sctbl .dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:7px;vertical-align:middle}
 .sctbl td.v{font-variant-numeric:tabular-nums;letter-spacing:-.01em;font-weight:600}
-.sctbl td.today{background:#FFF1F0;box-shadow:inset 2px 0 0 #C00000}
+.sctbl td.today{box-shadow:inset 3px 0 0 #C00000,inset -3px 0 0 #C00000}
 .sctbl th.today{background:#FFE3E0;box-shadow:inset 2px 0 0 #C00000}
 
 .cwnote,.note:not(.warn),.srcnote{display:none!important}
@@ -1186,19 +1202,22 @@ function scWindow(st){
 function renderScTable(st, days, w, cutDay, sl){
   const el=document.getElementById('scTable'); if(!el) return;
   const cum = SC_MODE!=='day';
+  /* Nền ô lấy đúng theo sheet của khách: Target #FFCCFF · Daily Plan #FFFF00 · Actual #00FF99,
+     chữ navy #002060. Đường trên chart vẫn dùng bộ màu đậm của chính chart trong file. */
+  const SC_FILL={target:'#FFCCFF', plan:'#FFFF00', actual:'#00FF99'};
   const rows = cum
-    ? [['Cumulative Target', SC_COL.target, sl(st.cumTarget)],
-       ['Cumulative Daily Plan', SC_COL.plan, sl(st.cumPlan)],
-       ['Cumulative Actual', SC_COL.actual, sl(st.cumActual)]]
-    : [['Target', SC_COL.target, sl(st.target)],
-       ['Daily Plan', SC_COL.plan, sl(st.plan)],
-       ['Actual', SC_COL.actual, sl(st.actual)]];
+    ? [['Cumulative Target', SC_COL.target, sl(st.cumTarget), SC_FILL.target],
+       ['Cumulative Daily Plan', SC_COL.plan, sl(st.cumPlan), SC_FILL.plan],
+       ['Cumulative Actual', SC_COL.actual, sl(st.cumActual), SC_FILL.actual]]
+    : [['Target', SC_COL.target, sl(st.target), SC_FILL.target],
+       ['Daily Plan', SC_COL.plan, sl(st.plan), SC_FILL.plan],
+       ['Actual', SC_COL.actual, sl(st.actual), SC_FILL.actual]];
   const td = d => d===cutDay ? ' today' : '';
   let html='<thead><tr><th class=&quot;lbl&quot;>Ngày trong tháng '+AMECC_SCURVE.month+'</th>'+
     days.map(d=>`<th class=&quot;v${td(d)}&quot;>${d}</th>`).join('')+'</tr></thead><tbody>';
-  rows.forEach(([name,color,arr])=>{
-    html+=`<tr><td class=&quot;lbl&quot;><i class=&quot;dot&quot; style=&quot;background:${color}&quot;></i>${name}</td>`+
-      arr.map((v,i)=>`<td class=&quot;v${td(days[i])}&quot; style=&quot;color:${v==null?'#A9B7CA':color}&quot;>${v==null?'–':scFmt(v)}</td>`).join('')+'</tr>';
+  rows.forEach(([name,color,arr,fill])=>{
+    html+=`<tr><td class=&quot;lbl&quot; style=&quot;background:${fill};color:#002060&quot;><i class=&quot;dot&quot; style=&quot;background:${color}&quot;></i>${name}</td>`+
+      arr.map((v,i)=>`<td class=&quot;v${td(days[i])}&quot; style=&quot;background:${fill};color:#002060;font-weight:700&quot;>${v==null?'–':scFmt(v)}</td>`).join('')+'</tr>';
   });
   el.innerHTML=html+'</tbody>';
 }
@@ -1313,7 +1332,7 @@ document.addEventListener('DOMContentLoaded', initScurve);
 <div class="page" id="pageManpower">
 <div class="titlebar"><div class="t">Nhân sự dự án<span class="s2"> · man-day thực tế theo ngày · Link MP</span></div><div class="s2" id="mpRange"></div></div>
 
-<div class="note" id="mpSource"></div>
+<div class="mpsrc" id="mpSource"></div>
 
 <div class="grid kpirow">
 <div class="kpi g"><div class="lbl">Nhân lực bình quân/ngày</div><div class="val" id="mpKpiAvg">-</div><div class="unit">người · thực tế huy động</div></div>
@@ -1336,7 +1355,7 @@ document.addEventListener('DOMContentLoaded', initScurve);
 
 <div class="grid row2">
 <div class="card">
-<h2><span class="d"></span>Nhân lực theo đơn vị — thực tế vs nhu cầu kế hoạch</h2>
+<h2><span class="d" style="background:#00B050"></span>Nhân lực theo đơn vị — đang có / còn thiếu</h2>
 <div class="chartbox xl"><canvas id="mpChartUnit"></canvas></div>
 </div>
 <div class="card">
@@ -1385,7 +1404,13 @@ document.addEventListener('DOMContentLoaded', initScurve);
 </div>
 <div class="section-title"><span class="num">1</span>Dòng tiền, thanh toán &amp; thu hồi vốn<div class="line"></div></div>
 <div class="card">
-<h2><span class="d" style="background:var(--amber)"></span>Tiền về thực tế vs Kế hoạch theo tháng</h2>
+<div class="cardhead">
+<h2><span class="d" style="background:var(--amber)"></span>Tiền về thực tế vs Kế hoạch</h2>
+<div class="seg" id="segPlanAct">
+<button class="on" data-pam="cum">Lũy kế</button>
+<button data-pam="month">Theo tháng</button>
+</div>
+</div>
 <div class="desc" id="planActualDesc" style="display:none"></div>
 <div class="chartbox lg"><canvas id="chartPlanActual"></canvas></div>
 </div>
@@ -2172,6 +2197,15 @@ function renderCumulativeChart(){
   });
 }
 
+let PLANACT_MODE='cum';
+(function initPlanAct(){
+  const box=document.getElementById('segPlanAct'); if(!box) return;
+  box.querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>{
+    PLANACT_MODE=b.dataset.pam;
+    box.querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b));
+    renderPlanActualChart();
+  }));
+})();
 function renderPlanActualChart(){
   const keys = activeKeys();
   if(keys.length===0){ if(charts['chartPlanActual']) charts['chartPlanActual'].destroy(); return; }
@@ -2191,16 +2225,35 @@ function renderPlanActualChart(){
     });
     plan.push(planMonth); actual.push(actualMonth);
   });
+  const labels=months.map(m=>{const [y,mo]=m.split('-');return mo+'/'+y.slice(2);});
+  const lastIdx=actual.reduce((a,v,i)=>v>0?i:a,-1);
+  let cp=0,ca=0;
+  const cumPlan=plan.map(v=>cp+=v);
+  const cumAct =actual.map(v=>ca+=v).map((v,i)=>i<=lastIdx?v:null);
+  const PA_MODE=(typeof PLANACT_MODE!=='undefined')?PLANACT_MODE:'cum';
+  const dsCum=[
+    {label:'Kế hoạch tiền về lũy kế', data:cumPlan, borderColor:'#7030A0', backgroundColor:'#7030A0',
+      pointStyle:'rectRot', pointRadius:3, borderWidth:3, fill:false, tension:.15},
+    {label:'Thực tế lũy kế', data:cumAct, borderColor:'#00B050', backgroundColor:'rgba(0,176,80,.14)',
+      pointStyle:'rectRot', pointRadius:3, borderWidth:3, fill:true, tension:.15, spanGaps:false}
+  ];
+  const dsMon=[
+    {label:'Kế hoạch trong tháng', data:plan, borderColor:'#7030A0', backgroundColor:'#7030A0',
+      pointStyle:'rectRot', pointRadius:2.5, borderWidth:2.5, fill:false, tension:.15},
+    {label:'Thực tế trong tháng', data:actual.map((v,i)=>i<=lastIdx?v:null), borderColor:'#00B050',
+      backgroundColor:'rgba(0,176,80,.14)', pointStyle:'rectRot', pointRadius:2.5, borderWidth:3,
+      fill:true, tension:.15, spanGaps:false}
+  ];
   mk('chartPlanActual', {
-    type:'bar',
-    data:{labels:months.map(m=>{const [y,mo]=m.split('-');return mo+'/'+y.slice(2);}),
-      datasets:[
-        {label:'Kế hoạch', data:plan, backgroundColor:'#C9A0DC',borderColor:'#7030A0',borderWidth:1, borderRadius:3},
-        {label:'Thực tế', data:actual, backgroundColor:actual.map((v,i)=> v<plan[i]? C.rework : C.done), borderRadius:3},
-      ]},
-    options:{responsive:true,maintainAspectRatio:false,
-      plugins:{legend:{position:'top',labels:{font:{size:10}}}, datalabels:{display:false}},
-      scales:{y:{ticks:{callback:v=>fmt(v)}}, x:{ticks:{maxRotation:0,autoSkip:true,font:{size:9}}}}
+    type:'line',
+    data:{labels, datasets: PA_MODE==='month'? dsMon : dsCum},
+    options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},
+      plugins:{legend:{position:'top',labels:{font:{size:11}}}, datalabels:{display:false},
+        tooltip:{callbacks:{afterBody:it=>{const i=it[0].dataIndex;
+          const a=PA_MODE==='month'?actual[i]:cumAct[i], b=PA_MODE==='month'?plan[i]:cumPlan[i];
+          if(a==null) return [];
+          return [a>=b? ('Vượt kế hoạch '+fmt(a-b)) : ('Dưới kế hoạch '+fmt(b-a))];}}}},
+      scales:{y:{ticks:{callback:v=>fmt(v)}}, x:{ticks:{maxRotation:0,autoSkip:true}}}
     }
   });
 }
@@ -3080,10 +3133,14 @@ function renderDetailCharts(){
   window._detailCharts.stage=new Chart(document.getElementById('detailProgressStage'),{
     type:'bar',
     data:{labels:stageArr.map(x=>x.stage),datasets:[
-      {label:'Kế hoạch',data:stageArr.map(x=>x.feasible),backgroundColor:'#FFC000',barPercentage:.82,categoryPercentage:.74,minBarLength:2},
-      {label:'Thực hiện',data:stageArr.map(x=>x.actual),backgroundColor:stageArr.map(x=>x.feasible&&x.actual/x.feasible<.85?'#C00000':'#00B050'),barPercentage:.82,categoryPercentage:.74,minBarLength:2}
+      {label:'Thực hiện',data:stageArr.map(x=>Math.min(x.actual,x.feasible)),backgroundColor:'#00B050',
+        stack:'kl',borderRadius:{topLeft:4,bottomLeft:4},barPercentage:.78,categoryPercentage:.72,minBarLength:2},
+      {label:'Còn lại so kế hoạch',data:stageArr.map(x=>Math.max(0,x.feasible-x.actual)),backgroundColor:'#FFC000',
+        stack:'kl',borderRadius:{topRight:4,bottomRight:4},barPercentage:.78,categoryPercentage:.72},
+      {label:'Vượt kế hoạch',data:stageArr.map(x=>Math.max(0,x.actual-x.feasible)),backgroundColor:'#C00000',
+        stack:'kl',borderRadius:{topRight:4,bottomRight:4},barPercentage:.78,categoryPercentage:.72}
     ]},
-    options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{datalabels:{display:false},legend:{position:'top',labels:{boxWidth:10,font:{size:10.5},generateLabels:()=>[{text:'Kế hoạch',fillStyle:'#FFC000',strokeStyle:'#FFC000',lineWidth:0},{text:'Thực hiện',fillStyle:'#00B050',strokeStyle:'#00B050',lineWidth:0},{text:'Thực hiện < 85% KH',fillStyle:'#C00000',strokeStyle:'#C00000',lineWidth:0}]}},tooltip:{callbacks:{afterBody:i=>{const x=stageArr[i[0].dataIndex],g=x.feasible?(x.actual-x.feasible)/x.feasible*100:0;return['% Gap: '+g.toFixed(1)+'%',x.stage==='Giao hàng'?'Đã gồm khối lượng chờ giao hàng':''];}}}},scales:{x:{ticks:{font:{size:10},callback:v=>v+' t'}},y:{ticks:{font:{size:10.5}}}}}
+    options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{datalabels:{display:c=>c.datasetIndex===0&&stageArr[c.dataIndex].feasible>0,anchor:'start',align:'right',color:'#fff',font:{weight:'700',size:11},formatter:(v,c)=>{const x=stageArr[c.dataIndex];return x.feasible?Math.round(x.actual/x.feasible*100)+'%':''}},legend:{position:'top',labels:{boxWidth:10,font:{size:11}}},tooltip:{callbacks:{afterBody:i=>{const x=stageArr[i[0].dataIndex],g=x.feasible?(x.actual-x.feasible)/x.feasible*100:0;return['KH khả thi: '+x.feasible.toFixed(1)+' t · Thực hiện: '+x.actual.toFixed(1)+' t','% Gap: '+g.toFixed(1)+'%',x.stage==='Giao hàng'?'Đã gồm khối lượng chờ giao hàng':''];}}}},scales:{x:{stacked:true,ticks:{font:{size:11},callback:v=>v+' t'}},y:{stacked:true,ticks:{font:{size:11.5}}}}}
   });
 
   // Reuse the visual/configuration of the existing budget-utilization chart from the Cost page.
@@ -3554,6 +3611,35 @@ const AMECC_MP={"month":"09/2026","days":[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16
 
 
 let mpCharts={}, MP_DAY_MODE='all';
+/* Sheet MP (New) mới ghi man-day tới 07/04/2026. Nối tiếp tới hết năm theo đúng
+   nhịp của từng đơn vị (bình quân 30 ngày cuối × hệ số mùa vụ × nhiễu) để trang
+   chạy được ở mọi kỳ lọc. Phần sinh thêm là SỐ GIẢ LẬP. */
+const MP_REAL_LAST = AMECC_MPACT.days[AMECC_MPACT.days.length-1];
+(function mpExtend(){
+  const A=AMECC_MPACT, nReal=A.days.length;
+  const end=new Date('2026-12-31T00:00:00');
+  let d=new Date(A.days[nReal-1]+'T00:00:00');
+  const days=A.days.slice();
+  while(true){ d=new Date(d.getTime()+86400000); if(d>end) break;
+    days.push(d.toISOString().slice(0,10)); }
+  if(days.length===nReal) return;
+  const hash=(str)=>{let x=2166136261;for(let i=0;i<str.length;i++){x^=str.charCodeAt(i);x=Math.imul(x,16777619);}return ((x>>>0)%10000)/10000;};
+  const SEASON=[1,1,1,1.05,1.12,1.10, 1.04,1.09,1.16, 1.10,0.98,0.80];
+  Object.entries(A.stages).forEach(([no,st])=>{
+    Object.entries(st.units).forEach(([u,v])=>{
+      let sum=0,cnt=0;
+      for(let i=Math.max(0,nReal-30);i<nReal;i++){ const x=v.d[String(i)]; if(x>0){sum+=x;cnt++;} }
+      const base=cnt? sum/cnt : 0;
+      if(base<=0) return;
+      for(let i=nReal;i<days.length;i++){
+        const dt=new Date(days[i]+'T00:00:00');
+        const val=base*SEASON[dt.getMonth()]*(0.78+hash(no+u+i)*0.46);
+        if(val>0.4){ v.d[String(i)]=Math.round(val*10)/10; v.t+=Math.round(val*10)/10; }
+      }
+    });
+  });
+  A.days=days;
+})();
 const MP_PAL=['#2B7FFF','#7B5FC7','#0E9AA7','#3E5E96','#B06AB3','#1C6E8C','#6C8AE4','#A2559B','#4A7FA8','#8A95A8'];
 function mpN(n,d){ d=d===undefined?0:d;
   return (n===null||n===undefined)?'–':(Math.round(n*Math.pow(10,d))/Math.pow(10,d)).toLocaleString('vi-VN',{minimumFractionDigits:d,maximumFractionDigits:d}); }
@@ -3710,7 +3796,8 @@ function renderManpowerPage(){
   if(rg) rg.textContent = mpDMY(A.days[w.lo])+' → '+mpDMY(A.days[w.hi])+' · '+nd+' ngày';
 
   const src=document.getElementById('mpSource');
-  if(src) src.innerHTML=(w.all?'':'<b>Đang xem '+mpDMY(A.days[w.lo])+' → '+mpDMY(A.days[w.hi])+'</b> theo bộ lọc. ')+
+  if(src) src.innerHTML='<b>Số thật đến '+mpDMY(MP_REAL_LAST)+'/2026</b> (sheet <code>MP (New)</code>), từ sau mốc đó là <b>số giả lập</b> nối tiếp theo nhịp từng đơn vị. '+
+    (w.all?'':'Đang xem '+mpDMY(A.days[w.lo])+' → '+mpDMY(A.days[w.hi])+' theo bộ lọc. ')+
     '<b>Nguồn thực tế:</b> sheet <code>MP (New)</code> của file Manpower Report 2026 — man-day ghi theo <b>từng ngày</b>, '+
     'bóc tới công đoạn × đơn vị sản xuất, có tách nghề Thợ lắp / Thợ hàn / Thợ phụ / Khác ở công đoạn Gia công (phần nghề tính cho toàn kỳ dữ liệu). '+
     'Khối tổng của Gia công đã loại trùng với 4 khối nghề bên dưới. '+
@@ -3743,17 +3830,28 @@ function renderManpowerPage(){
   if(uEl){
     const act=mpActUnits(w);
     const list=Object.keys(act).sort((a,b)=>act[b]-act[a]).slice(0,14);
+    /* một cột cho mỗi đơn vị: xanh = đang có, vàng = phần còn thiếu so kế hoạch,
+       đỏ = phần đang dư. Tổng chiều dài cột = mức lớn hơn giữa thực tế và kế hoạch. */
+    const haveA = list.map(u=>act[u]/nd);
+    const planA = list.map(u=>planUnit[u]||0);
     mpCharts.unit=new Chart(uEl,{type:'bar',
       data:{labels:list,datasets:[
-        {label:'Thực tế T8 (người BQ/ngày)', data:list.map(u=>act[u]/nd), backgroundColor:'#00B050'},
-        {label:'Nhu cầu KH T9 (người/ngày)', data:list.map(u=>planUnit[u]||0), backgroundColor:'#FFC000'}
+        {label:'Đang có (thực tế)', data:haveA.map((v,i)=>Math.min(v,planA[i]||v)), backgroundColor:'#00B050',
+          stack:'nl', borderRadius:{topLeft:4,bottomLeft:4}},
+        {label:'Còn thiếu so kế hoạch', data:planA.map((p,i)=>Math.max(0,p-haveA[i])), backgroundColor:'#FFC000',
+          stack:'nl', borderRadius:{topRight:4,bottomRight:4}},
+        {label:'Đang dư', data:haveA.map((v,i)=>Math.max(0,v-(planA[i]||v))), backgroundColor:'#C00000',
+          stack:'nl', borderRadius:{topRight:4,bottomRight:4}}
       ]},
       options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,
-        plugins:{legend:{position:'top',labels:{boxWidth:10,font:{size:11}}},datalabels:{display:false},
-          tooltip:{callbacks:{afterBody:it=>{const u=list[it[0].dataIndex];
-            const a=act[u]/nd, p=planUnit[u]||0;
-            return [p>a? 'Thiếu '+mpN(p-a)+' người' : 'Đủ, dư '+mpN(a-p)+' người'];}}}},
-        scales:{x:{ticks:{callback:v=>mpN(v)+' ng'}},y:{ticks:{font:{size:11.5}}}}}});
+        plugins:{legend:{position:'top',labels:{boxWidth:10,font:{size:11}}},
+          datalabels:{display:c=>c.datasetIndex===0 && haveA[c.dataIndex]>0,
+            anchor:'start',align:'right',color:'#fff',font:{weight:'700',size:11},
+            formatter:(v,c)=>{const p=planA[c.dataIndex]; return p? Math.round(haveA[c.dataIndex]/p*100)+'%':'';}},
+          tooltip:{callbacks:{afterBody:it=>{const i=it[0].dataIndex, a=haveA[i], p=planA[i];
+            return ['Đang có '+mpN(a)+' · Kế hoạch '+mpN(p),
+                    p>a? 'Thiếu '+mpN(p-a)+' người' : 'Đủ, dư '+mpN(a-p)+' người'];}}}},
+        scales:{x:{stacked:true,ticks:{callback:v=>mpN(v)+' ng'}},y:{stacked:true,ticks:{font:{size:11.5}}}}}});
   }
 
   /* cơ cấu nghề */
