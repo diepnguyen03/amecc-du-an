@@ -258,15 +258,26 @@ tbody tr.child td:first-child{padding-left:26px;color:#3C4C63;font-weight:500}
 /* ghim hàng tiêu đề và cột đầu cho các bảng ma trận trang Nhân sự */
 #mpMatrixAct thead th,#mpProjAct thead th,#mpMatrix thead th,
 #tblCcode thead th,#tblRecovery thead th,#tblUtilBuckets thead th,
-#tblCapTeam thead th,#tblCapStage thead th,#tblCapHeat thead th,#tblC4 thead th{
+#tblCapTeam thead th,#tblCapStage thead th,#tblCapHeat thead th,#tblC4 thead th,
+#tblCpStage thead th,#tblCpUnit thead th,#tblCpTrade thead th{
   position:sticky;top:0;z-index:5}
 #mpMatrixAct th:first-child,#mpMatrixAct td:first-child,
 #mpProjAct th:first-child,#mpProjAct td:first-child,
 #mpMatrix th:first-child,#mpMatrix td:first-child,
-#tblCapHeat th:first-child,#tblCapHeat td:first-child{
+#tblCapHeat th:first-child,#tblCapHeat td:first-child,
+#tblCpStage th:nth-child(1),#tblCpStage td:nth-child(1),
+#tblCpStage th:nth-child(2),#tblCpStage td:nth-child(2),
+#tblCpUnit th:first-child,#tblCpUnit td:first-child{
   position:sticky;left:0;z-index:4;background:#fff;box-shadow:1px 0 0 var(--line)}
 #mpMatrixAct thead th:first-child,#mpProjAct thead th:first-child,
-#mpMatrix thead th:first-child,#tblCapHeat thead th:first-child{z-index:7;background:var(--bg-2)}
+#mpMatrix thead th:first-child,#tblCapHeat thead th:first-child,
+#tblCpStage thead th:nth-child(1),#tblCpStage thead th:nth-child(2),
+#tblCpUnit thead th:first-child{z-index:7;background:var(--bg-2)}
+#tblCpStage th:nth-child(1),#tblCpStage td:nth-child(1){left:0;min-width:56px;box-shadow:none}
+#tblCpStage th:nth-child(2),#tblCpStage td:nth-child(2){left:56px}
+#tblCpStage tr.tot td:nth-child(1),#tblCpStage tr.tot td:nth-child(2){background:#EAF2FF}
+#tblCpStage tr.tot td:first-child,#tblCpUnit tr.tot td:first-child,
+#tblCapHeat tr.tot td:first-child{background:#EAF2FF}
 #mpMatrixAct tr.tot td:first-child,#mpProjAct tr.tot td:first-child,
 #mpMatrix tr.tot td:first-child{background:#EAF2FF}
 .note{font-size:11.5px;color:var(--muted);background:var(--bg-2);border:.5px solid var(--line);padding:11px 13px;border-radius:12px;margin-top:12px;line-height:1.6}
@@ -432,7 +443,7 @@ tbody tr.drill:hover td:first-child::after{opacity:1}
 </div>
 </div>
 <div class="card">
-<h2><span class="d"></span>% Hoàn thành tiến độ &amp; % Sử dụng ngân sách theo dự án</h2>
+<h2><span class="d"></span>% Hoàn thành toàn dự án &amp; % Sử dụng ngân sách lũy kế</h2>
 <div class="desc">Mỗi dòng = 1 dự án. Màu theo từng cột: tiến độ (đỏ=chậm, xanh=đúng KH), ngân sách (xanh=còn dư, đỏ=vượt).</div>
 <div class="tablewrap">
 <table id="tblOvHeat"></table>
@@ -1553,7 +1564,7 @@ document.addEventListener('DOMContentLoaded', initScurve);
 </div>
 </div>
 <div class="page" id="pageCapacity">
-<div class="titlebar"><div class="t">Năng lực sản xuất<span class="s2"> · man-day thật tháng 8/2026 · W32–W36</span></div><div class="s2">Nguồn: sheet 1. Completed + Link MP</div></div>
+<div class="titlebar"><div class="t">Năng lực sản xuất<span class="s2" id="capScope"> · man-day thật · W32–W36 tháng 8/2026</span></div><div class="s2">Nguồn: sheet 1. Completed + Link MP</div></div>
 
 <div class="grid kpirow">
 <div class="kpi"><div class="lbl">Man-day tháng 8</div><div class="val" id="cpKpiMd">-</div><div class="unit">man-day · 1 man-day = 8 giờ</div></div>
@@ -2325,7 +2336,7 @@ function renderBudgetDetailTable(){
   nameEl.textContent = proj;
   descEl.innerHTML = `Dự toán, ngân sách đã sử dụng, chi tiết thanh toán và % sử dụng ngân sách theo từng hạng mục của dự án <b>${proj}</b>. Cột "Khối lượng thực hiện" và "Ngân sách đã sử dụng" tô màu theo mức sử dụng so với "Tổng khối lượng"/"Dự toán": <b style="color:var(--done)">Xanh</b> &lt;75% · <b style="color:#b57912">Vàng</b> 75–99% · <b style="color:var(--rework)">Đỏ</b> ≥100%. Bấm vào 1 hạng mục để xem chi tiết chi phí con. <i>Khối lượng theo hạng mục là ước tính theo tỷ trọng dự toán của hạng mục đó trên tổng khối lượng dự án (file gốc chỉ có khối lượng ở cấp tổng dự án).</i>`;
 
-  let thead = `<thead><tr><th>Hạng mục chi phí</th><th>Tổng khối lượng (Kg)</th><th>Dự toán</th><th>Khối lượng thực hiện (Kg)</th><th>Ngân sách đã sử dụng</th><th>% Sử dụng ngân sách</th><th>Tổng tiền đã thanh toán</th><th>Lần TT 1</th><th>Lần TT 2</th><th>Lần TT 3</th><th>Lần TT 4</th><th>% Thanh toán HĐ</th></tr></thead>`;
+  let thead = `<thead><tr><th>Hạng mục chi phí</th><th>Tổng khối lượng (Kg)</th><th>Dự toán</th><th>Khối lượng thực hiện (Kg)</th><th>Ngân sách đã sử dụng</th><th>% Sử dụng ngân sách<br><span style="font-weight:400;text-transform:none">lũy kế / dự toán</span></th><th>Tổng tiền đã thanh toán</th><th>Lần TT 1</th><th>Lần TT 2</th><th>Lần TT 3</th><th>Lần TT 4</th><th>% Thanh toán HĐ</th></tr></thead>`;
   let body = '<tbody>';
   CATS.forEach(cat=>{
     const budget = p.cats_budget[cat] || 0;
@@ -2492,6 +2503,7 @@ function updateTitlebars(){
 }
 function onFilterChange(){
   updateTitlebars();
+  if(typeof renderSubmitTables==='function'){ try{renderSubmitTables()}catch(e){} }
   if(typeof renderCostCodes==='function'){ try{renderCostCodes();renderRecovery()}catch(e){console.error(e)} }
   setTimeout(()=>{try{hideThinCharts()}catch(e){}},120);
   if(typeof renderManpowerPage==='function'){ try{renderManpowerPage()}catch(e){console.error(e)} }
@@ -2818,7 +2830,7 @@ function renderOvClassifyTable(){
 
 function renderOvHeatmap(){
   const keys = overviewKeys();
-  let thead = '<thead><tr><th>Dự án</th><th>% Hoàn thành tiến độ</th><th>% Sử dụng ngân sách</th></tr></thead>';
+  let thead = '<thead><tr><th>Dự án</th><th>% Hoàn thành<br><span style="font-weight:400;text-transform:none">toàn dự án</span></th><th>% Sử dụng ngân sách<br><span style="font-weight:400;text-transform:none">lũy kế / dự toán</span></th></tr></thead>';
   let body = '<tbody>';
   keys.forEach(k=>{
     const p = DATA.projects[k];
@@ -2971,12 +2983,27 @@ const UNITS2 = [
   {unit:'IRB', sender:'Vũ Thị Nhung', base:'nhungvt1'},
   {unit:'Thầu phụ MDC', sender:'Phạm Văn Toàn', base:'AM12019'},
 ];
-const SUBMIT_WEEKS = [
-  {year:2025, month:3, monthLabel:'Tháng 3', label:'Tuần 12 (17/3 - 23/3)', start:'2025-03-17'},
-  {year:2025, month:3, monthLabel:'Tháng 3', label:'Tuần 13 (24/3 - 30/3)', start:'2025-03-24'},
-  {year:2025, month:4, monthLabel:'Tháng 4', label:'Tuần 14 (31/3 - 6/4)', start:'2025-03-31'},
-  {year:2025, month:4, monthLabel:'Tháng 4', label:'Tuần 15 (7/4 - 13/4)', start:'2025-04-07'},
-];
+/* Danh sách tuần phủ toàn bộ dải ngày của báo cáo để bộ lọc chung điều khiển được.
+   Tuần bắt đầu từ thứ Hai; nhãn "Tuần n" theo chuẩn ISO. */
+const SUBMIT_WEEKS = (function(){
+  const out=[];
+  const d=new Date('2024-09-30T00:00:00');            /* thứ Hai đầu tiên */
+  const end=new Date('2026-12-28T00:00:00');
+  const isoWeek=(dt)=>{const t=new Date(Date.UTC(dt.getFullYear(),dt.getMonth(),dt.getDate()));
+    const dn=t.getUTCDay()||7; t.setUTCDate(t.getUTCDate()+4-dn);
+    const y0=new Date(Date.UTC(t.getUTCFullYear(),0,1));
+    return Math.ceil(((t-y0)/86400000+1)/7);};
+  while(d<=end){
+    const e=new Date(d.getTime()+6*86400000);
+    const mid=new Date(d.getTime()+3*86400000);       /* tháng của tuần = tháng giữa tuần */
+    out.push({year:mid.getFullYear(), month:mid.getMonth()+1,
+      monthLabel:'Tháng '+(mid.getMonth()+1),
+      label:'Tuần '+isoWeek(d)+' ('+d.getDate()+'/'+(d.getMonth()+1)+' - '+e.getDate()+'/'+(e.getMonth()+1)+')',
+      start:d.toISOString().slice(0,10)});
+    d.setDate(d.getDate()+7);
+  }
+  return out;
+})();
 function weekDates(startStr){
   const d0 = new Date(startStr+'T00:00:00');
   const out = [];
@@ -3067,7 +3094,25 @@ function renderSubmitTable2(dates){
   body += '</tbody>';
   tbl.innerHTML = thead + body;
 }
+/* Tuần hiển thị bám theo Ngày kết thúc của bộ lọc chung */
+let _submitSyncing=false;
+function submitSyncWeek(){
+  if(_submitSyncing) return;
+  const t=document.getElementById('selTo');
+  if(!t||!t.value||typeof SUBMIT_WEEKS==='undefined'||!SUBMIT_WEEKS.length) return;
+  const tgt=new Date(t.value+'T00:00:00');
+  let best=null,bd=Infinity;
+  SUBMIT_WEEKS.forEach(w=>{const d=Math.abs(new Date(w.start+'T00:00:00')-tgt); if(d<bd){bd=d;best=w;}});
+  if(!best) return;
+  _submitSyncing=true;
+  try{
+    if(Number(selSubmitYear.value)!==best.year){ selSubmitYear.value=best.year; refreshSubmitMonths(); }
+    if(Number(selSubmitMonth.value)!==best.month){ selSubmitMonth.value=best.month; refreshSubmitWeeks(); }
+    if(selSubmitWeek.value!==best.start) selSubmitWeek.value=best.start;
+  } finally { _submitSyncing=false; }
+}
 function renderSubmitTables(){
+  submitSyncWeek();
   const start = selSubmitWeek.value;
   const dates = weekDates(start);
   document.getElementById('submitWeekLabel2').textContent = `Tuần: ${fmtDateCol(dates[0])} – ${fmtDateCol(dates[6])} (giả lập minh họa)`;
@@ -3414,7 +3459,19 @@ function cpHeat(v){
   return `<td class="heatcell" style="background:${bg};color:${c};font-weight:700">${cpP(v)}</td>`;
 }
 
+/* Nguồn Completed Weight chỉ có tháng 8/2026 — nếu kỳ lọc không chạm tháng đó thì nói rõ */
+function capScopeNote(){
+  const el=document.getElementById('capScope'); if(!el) return true;
+  const f=document.getElementById('selFrom'), t=document.getElementById('selTo');
+  if(!f||!t||!f.value||!t.value){ el.textContent=' · man-day thật · W32–W36 tháng 8/2026'; return true; }
+  const hit = f.value<='2026-08-31' && t.value>='2026-08-01';
+  el.innerHTML = hit
+    ? ' · man-day thật · W32–W36 tháng 8/2026'
+    : ' · <b style="color:#9E2018">kỳ lọc '+f.value.slice(8)+'/'+f.value.slice(5,7)+'–'+t.value.slice(8)+'/'+t.value.slice(5,7)+' không có dữ liệu, đang hiển thị tháng 8/2026</b>';
+  return hit;
+}
 function renderCapacityPage(){
+  capScopeNote();
   const D=AMECC_CAP, W=D.weeks;
   const act=D.stages.filter(x=>x.md>0);
   const totMd=act.reduce((a,x)=>a+x.md,0);
@@ -3649,11 +3706,14 @@ function mpDMY(iso){ const p=iso.split('-'); return p[2]+'/'+p[1]; }
 /* Cắt dải ngày theo bộ lọc Ngày bắt đầu / Ngày kết thúc */
 function mpWindow(){
   const D=AMECC_MPACT.days;
+  /* không hiển thị quá ngày chốt số liệu của báo cáo */
+  const ASOF=(typeof DATA_ASOF!=='undefined'&&DATA_ASOF)?DATA_ASOF:null;
   const f=document.getElementById('selFrom'), t=document.getElementById('selTo');
   if(!f||!t||!f.value||!t.value) return {lo:0,hi:D.length-1,all:true};
   let lo=0, hi=D.length-1;
+  const cap = ASOF && t.value>ASOF ? ASOF : t.value;
   while(lo<=hi && D[lo]<f.value) lo++;
-  while(hi>=lo && D[hi]>t.value) hi--;
+  while(hi>=lo && D[hi]>cap) hi--;
   if(lo>hi) return null;
   return {lo,hi,all:(lo===0&&hi===D.length-1)};
 }
@@ -4130,40 +4190,38 @@ function renderC4(){
    của từng dự án (cột cost_total lấy từ 7 file khách) rồi tách theo tỷ trọng
    thông thường của một dự án kết cấu thép. Khi có bản BM.199.01 đã điền thì thay
    hàm ccBudget() là xong, phần hiển thị giữ nguyên. */
-const C_CODES = [
-  ['C1','Lương trực tiếp',0.125],   ['C2','Lương gián tiếp',0.045],
-  ['C3','Thầu phụ',0.085],          ['C4','Vật tư chính',0.300],
-  ['C5','Phụ kiện & bu lông',0.035],['C6','Vật tư sơn',0.030],
-  ['C7','Vật tư tiêu hao',0.025],   ['C8','Vật tư đóng kiện',0.018],
-  ['C9','Khấu hao nhà xưởng',0.035],['C10','Máy thiết bị',0.028],
-  ['C11','Vận chuyển',0.032],
-  ['C12.1','Văn phòng phẩm',0.004], ['C12.2','Điện nước',0.012],
-  ['C12.3','Sửa chữa, bảo trì',0.009],['C12.4','Xăng dầu',0.011],
-  ['C12.5','Xe',0.006],             ['C12.6','Xuất nhập khẩu',0.018],
-  ['C12.7','Bảo hiểm, an toàn',0.005],['C12.8','Chi phí chung',0.010],
-  ['C13','CP doanh nghiệp',0.030],  ['C14','CP tài chính',0.020],
-  ['C15','Tư vấn',0.010],           ['C16','Dự phòng',0.027]
-];
+/* Danh mục mã chi phí lấy thẳng từ DATA.cats / DATA.cat_labels của 7 file khách,
+   không tự đặt nữa — trước đây hai trang dùng hai danh mục lệch nhau từ C13. */
+const C_WEIGHT = {
+  'C1':0.125,'C2':0.045,'C3':0.085,'C4':0.300,'C5':0.035,'C6':0.030,'C7':0.025,'C8':0.018,
+  'C9':0.035,'C10':0.028,'C11':0.032,
+  'C12.1':0.004,'C12.2':0.012,'C12.3':0.009,'C12.4':0.011,'C12.5':0.006,'C12.6':0.018,
+  'C12.7':0.005,'C12.8':0.010,
+  'C13':0.030,'C14':0.020,'C15':0.012,'C16':0.010,'C17':0.025
+};
+const C_CODES = DATA.cats.map(c => [c, DATA.cat_labels[c] || c, C_WEIGHT[c] || 0.01]);
 function ccHash(str){ let h=2166136261; for(let i=0;i<str.length;i++){h^=str.charCodeAt(i);h=Math.imul(h,16777619);} return ((h>>>0)%10000)/10000; }
 
 /* dự toán gốc / điều chỉnh / thực hiện theo từng mã C cho tập dự án đang lọc */
 function ccBudget(){
   const keys=activeKeys();
   const tot=C_CODES.reduce((a,c)=>a+c[2],0);
-  const out=C_CODES.map(([code,name,w])=>({code,name,base:0,adj:0,used:0}));
+  const out=C_CODES.map(([code,name])=>({code,name,base:0,adj:0,used:0}));
   keys.forEach(k=>{
     const p=DATA.projects[k];
     const budget=p.cost_total||0;
-    const prog=(p.cost_total? p.performed_total/p.cost_total : 0);
+    const usedReal=p.performed_total||0;
+    const raw=[];
     out.forEach((row,i)=>{
       const [code,,w]=C_CODES[i];
       const base=budget*w/tot;
       const varr=(ccHash(k+code)-0.5)*0.18;          /* phát sinh ±9% */
       const adj=base*(1+varr);
-      const paceRnd=0.75+ccHash(code+k)*0.5;
-      const used=Math.min(adj*1.12, adj*prog*paceRnd);
-      row.base+=base; row.adj+=adj; row.used+=used;
+      raw.push({base, adj, u: adj*(0.75+ccHash(code+k)*0.5)});
     });
+    /* chuẩn hoá: tổng thực hiện theo mã C phải bằng đúng số thật của dự án */
+    const su=raw.reduce((a,r)=>a+r.u,0)||1;
+    raw.forEach((r,i)=>{ out[i].base+=r.base; out[i].adj+=r.adj; out[i].used+=usedReal*r.u/su; });
   });
   return out;
 }
