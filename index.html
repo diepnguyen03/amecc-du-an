@@ -9,6 +9,7 @@
 /* Bảng màu chuỗi dùng chung cho mọi biểu đồ nhiều nhánh của báo cáo.
    Không dùng vàng / xanh lá / đỏ ở đây — ba màu đó chỉ dành cho
    Kế hoạch · Thực hiện · Cảnh báo. */
+window.REPORT_ASOF='2026-09-28';
 var SERIES=window.SERIES=['#2B7FFF','#7B5FC7','#0E9AA7','#3E5E96','#B06AB3','#1C6E8C','#6C8AE4','#A2559B','#4A7FA8','#8A95A8'];
 var seriesColor=window.seriesColor=i=>SERIES[i%SERIES.length];
 /* Chiều cao 2 iframe: 3 lớp phòng hờ để trang không bao giờ trắng
@@ -146,7 +147,7 @@ main{flex:1;min-width:0;padding:22px 26px 44px;max-width:1560px}
 
 .notelbl{display:block;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.3px;color:var(--muted);margin:0 0 6px}
 .notebox{width:100%;border:.5px solid var(--line-2);border-radius:10px;padding:10px 12px;font-family:'Inter';font-size:13px;line-height:1.55;color:var(--ink);background:#FFFDF5;resize:vertical}
-.notebox:focus{outline:none;border-color:#FFC000;box-shadow:0 0 0 3px rgba(255,192,0,.18);background:#fff}
+.notebox:focus{outline:none;border-color:#8A6112;box-shadow:0 0 0 3px rgba(255,192,0,.18);background:#fff}
 .notesave{font-size:11px;color:var(--dim);margin-top:8px}
 #btnPrintProj{background:#7030A0;border:1px solid #7030A0;color:#fff;font-family:'Inter';font-size:11.5px;font-weight:600;padding:6px 14px;border-radius:8px;cursor:pointer}
 #btnPrintProj:hover{background:#5B2583}
@@ -156,9 +157,26 @@ main{flex:1;min-width:0;padding:22px 26px 44px;max-width:1560px}
   main{padding:0!important;background:#fff!important}
   .page{display:none!important}
   .page.on{display:block!important}
-  .card{break-inside:avoid;box-shadow:none!important;border:.5px solid #C2D3EC!important}
+  .card{break-inside:avoid;box-shadow:none!important;border:.5px solid #C2D3EC!important;margin-bottom:6mm!important}
+  .grid,.grid.row2,.budgrid{display:block!important}
+  .tablewrap{max-height:none!important;overflow:visible!important}
+  table{font-size:8px!important;width:100%!important;table-layout:fixed!important;border-collapse:collapse!important}
+  th,td{padding:2px 3px!important;white-space:normal!important;overflow-wrap:anywhere!important;
+    word-break:break-word!important;text-overflow:clip!important;position:static!important;box-shadow:none!important}
+  thead th{font-size:7.5px!important;letter-spacing:0!important}
+  .mono,.heatcell{font-size:8px!important}
+  .tablewrap{border:0!important}
+  .card{break-inside:avoid!important;page-break-inside:avoid!important}
+  .section-title{break-after:avoid!important}
+  .chartbox,.chartbox.lg,.chartbox.xl,.detail-chartbox{height:auto!important;min-height:0!important;
+    position:relative!important;overflow:hidden!important;break-inside:avoid!important}
+  .chartbox canvas,.detail-chartbox canvas{width:100%!important;height:auto!important;max-height:52mm!important;
+    position:static!important;display:block!important}
+  .card{overflow:hidden!important}
+  .kpirow{display:grid!important;grid-template-columns:repeat(3,1fr)!important}
+  .kpi .val{font-size:18px!important}
   .notebox{background:#fff!important;border:.5px solid #999!important}
-  @page{size:A4 landscape;margin:10mm}
+  @page{size:A4 portrait;margin:8mm}
 }
 
 .budgrid{display:grid;grid-template-columns:1.55fr 1fr;gap:13px}
@@ -215,7 +233,7 @@ box-shadow:0 1px 2px rgba(16,40,80,.035),0 8px 22px -18px rgba(16,40,80,.30);tra
 .kpi{background:linear-gradient(180deg,#fff 0%,#FAFCFF 100%);border-radius:12px;padding:15px 15px 13px;border:.5px solid var(--line);position:relative;overflow:hidden;
 box-shadow:0 1px 2px rgba(16,40,80,.04),0 10px 24px -16px rgba(16,40,80,.30);transition:transform .15s,box-shadow .15s}
 .kpi:hover{transform:translateY(-2px);box-shadow:0 2px 5px rgba(16,40,80,.07),0 18px 32px -18px rgba(16,40,80,.38)}
-.kpi::before{content:'';position:absolute;left:0;right:0;top:0;height:3px;background:linear-gradient(90deg,#2B7FFF,#6C8AE4)}
+.kpi::before{content:'';position:absolute;left:0;right:0;top:0;height:3px;background:linear-gradient(90deg,#7030A0,#A96FD0)}
 .kpi.a::before{background:linear-gradient(90deg,#FFC000,#FFD866)}
 .kpi.g::before{background:linear-gradient(90deg,#00B050,#49C98A)}
 .kpi.r::before{background:linear-gradient(90deg,#C00000,#E06A5E)}
@@ -226,7 +244,7 @@ box-shadow:0 1px 2px rgba(16,40,80,.04),0 10px 24px -16px rgba(16,40,80,.30);tra
 .kpi.r .val{color:var(--rework)}
 .kpi .lbl{font-size:10.5px;text-transform:uppercase;letter-spacing:.3px;color:var(--muted);font-weight:500;padding-right:50px;line-height:1.4;min-height:29px}
 .kpi .val{font-family:'Inter';font-size:25px;font-weight:600;margin:7px 0 2px;color:var(--ink);letter-spacing:-.01em;position:relative}
-.kpi .unit{font-size:11.5px;color:var(--muted);font-weight:400}
+.kpi .unit{font-size:12.5px;color:var(--muted);font-weight:400}
 .yoy{position:absolute;top:11px;right:12px;font-size:10.5px;font-weight:500;margin:0}
 .yoy .up{color:var(--done);background:#D3F6E3;padding:2px 8px;border-radius:999px;display:inline-block}
 .yoy .down{color:var(--rework);background:#FFE0DD;padding:2px 8px;border-radius:999px;display:inline-block}
@@ -429,7 +447,7 @@ tbody tr.drill:hover td:first-child::after{opacity:1}
 <div class="chartbox lg"><canvas id="chartOvWeightCumulative"></canvas></div>
 </div>
 <div class="card">
-<h2><span class="d" style="background:var(--done)"></span>Doanh thu tiền về vs Kế hoạch theo tháng</h2>
+<h2><span class="d" style="background:#00B050"></span>Tiền về lũy kế vs Kế hoạch</h2>
 <div class="desc" style="display:none"></div>
 <div class="chartbox lg"><canvas id="chartOvPlanActual"></canvas></div>
 </div>
@@ -516,7 +534,7 @@ if(window.Chart){try{Chart.register(window[&quot;chartjs-plugin-annotation&quot;
 .header{min-height:66px;background:#fff;color:var(--ink);display:flex;align-items:center;justify-content:space-between;padding:12px 22px;gap:22px;border-bottom:.5px solid var(--line)}.brand{display:flex;align-items:center;gap:12px}.logo{display:block;height:42px;width:auto;object-fit:contain}.brand h1{font-family:'Inter';font-size:17px;font-weight:700;line-height:1;margin:0}.brand small{color:#9fb2cc;font-size:10.5px;text-transform:uppercase;letter-spacing:.4px}.source{max-width:650px;text-align:right;font-size:10.5px;color:#9fb2cc;line-height:1.5}
 .tabs{display:flex;background:#fff;padding:0 22px;border-bottom:1px solid var(--line)}.tabs button{border:0;background:transparent;padding:13px 18px;font-family:'Inter';font-size:12.5px;font-weight:600;color:#75859b;border-bottom:2.5px solid transparent;cursor:pointer}.tabs button.active{color:var(--blue);border-color:var(--blue)}
 .toolbar{background:linear-gradient(100deg,var(--nav2),#24395e);padding:11px 22px;display:flex;gap:20px;flex-wrap:wrap;align-items:end}.filter{display:flex;flex-direction:column;gap:4px}.filter label{font-size:9.5px;color:#8fa3c0;text-transform:uppercase;letter-spacing:.8px;font-weight:600}.filter select{min-width:150px;background:rgba(255,255,255,.08);color:#fff;border:1px solid rgba(255,255,255,.16);padding:7px 11px;border-radius:7px;font-family:'Inter';font-size:11.5px}.filter select option{color:#182d4b;background:#fff}.filter.project select{min-width:190px}.filter.compact select{min-width:120px}.main{padding:18px 22px 40px}.notice{background:#f6f9fc;border-left:3px solid #5c91d5;padding:10px 12px;border-radius:0 7px 7px 0;color:#74839a;font-size:10.5px;margin-bottom:12px;line-height:1.6}.page{display:none}.page.active{display:block}
-.kpis{display:grid;gap:12px;margin-bottom:12px}#progressKpis{grid-template-columns:repeat(4,minmax(0,1fr))}#manpowerKpis{grid-template-columns:repeat(3,minmax(0,1fr))}.kpi{position:relative;background:#fff;border:.5px solid var(--line);border-radius:12px;padding:13px 15px;min-height:92px;overflow:hidden}.kpi .val{color:#2B7FFF}.kpi.orange .val{color:var(--orange)}.kpi.green .val{color:var(--green)}.kpi.red .val{color:var(--red)}.kpi .lbl{font-size:10.5px;text-transform:uppercase;color:var(--muted);font-weight:500;letter-spacing:.3px;line-height:1.4}.kpi .val{font-family:'Inter';font-size:23px;font-weight:500;margin:6px 0 2px;letter-spacing:0}.kpi .sub{font-size:11.5px;color:var(--muted);min-height:18px;font-weight:400}.trend{border-top:1px dashed #e0e6ef;margin-top:5px;padding-top:5px;font-size:9.5px;font-weight:700;display:flex;align-items:center;gap:4px}.trend .arrow{font-size:11px;font-weight:800;line-height:1}.trend.up{color:var(--green)}.trend.down{color:var(--red)}.trend.neutral{color:#8895a7}
+.kpis{display:grid;gap:12px;margin-bottom:12px}#progressKpis{grid-template-columns:repeat(4,minmax(0,1fr))}#manpowerKpis{grid-template-columns:repeat(3,minmax(0,1fr))}.kpi{position:relative;background:#fff;border:.5px solid var(--line);border-radius:12px;padding:13px 15px;min-height:92px;overflow:hidden}.kpi .val{color:#7030A0}.kpi.orange .val{color:var(--orange)}.kpi.green .val{color:var(--green)}.kpi.red .val{color:var(--red)}.kpi .lbl{font-size:10.5px;text-transform:uppercase;color:var(--muted);font-weight:500;letter-spacing:.3px;line-height:1.4}.kpi .val{font-family:'Inter';font-size:23px;font-weight:500;margin:6px 0 2px;letter-spacing:0}.kpi .sub{font-size:12.5px;color:var(--muted);min-height:18px;font-weight:400}.trend{border-top:1px dashed #e0e6ef;margin-top:5px;padding-top:5px;font-size:9.5px;font-weight:700;display:flex;align-items:center;gap:4px}.trend .arrow{font-size:11px;font-weight:800;line-height:1}.trend.up{color:var(--green)}.trend.down{color:var(--red)}.trend.neutral{color:#8895a7}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;align-items:stretch}.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:12px;align-items:stretch}.card{background:#fff;border:.5px solid var(--line);border-radius:12px;padding:14px 16px;margin-bottom:12px}.grid2>.card,.grid3>.card{margin-bottom:0}.card h3{font-family:'Inter';font-size:13.5px;font-weight:600;color:var(--ink);margin:0 0 2px;display:flex;align-items:center;gap:8px}.card h3:before{content:&quot;&quot;;display:inline-block;flex:0 0 auto;width:7px;height:7px;border-radius:50%;background:var(--blue);margin-right:0}.desc{font-size:10px;color:#7c899b;margin-bottom:10px;line-height:1.5}.chart{height:290px}.chart.tall{height:360px}.chart.sm{height:160px}.chart.xs{height:160px}.card.flex-fill{display:flex;flex-direction:column}.card.flex-fill .chart{flex:1 1 auto;height:auto;min-height:300px}.table-wrap{overflow:auto}.tbl{width:100%;border-collapse:collapse;font-size:13.5px}
 .tbl td.num{font-weight:600;font-variant-numeric:tabular-nums;letter-spacing:-.01em}.tbl th{color:#1F2E45;background:#EDF3FC;border-bottom:2px solid #C2D3EC;font-size:12px;text-transform:uppercase;color:#7c899b;text-align:left;padding:9px 10px;border-bottom:1.5px solid var(--line);white-space:nowrap;font-weight:600}.tbl th.num{text-align:right}.tbl th.center{text-align:center}.tbl td{padding:9px 10px;border-bottom:1px solid #f1f5f9;white-space:nowrap}.tbl tr:hover td{background:#f8fbff}.stp-row td{background:#f3f5f8;font-weight:700}.stp-row:hover td{background:#eef1f5}.num{text-align:right}.center{text-align:center}.badge{color:#fff;padding:2px 8px;border-radius:20px;font-weight:600;font-size:10.5px}.badge.pos{background:var(--green)}.badge.amber{background:var(--amber)}.badge.neg{background:var(--red)}.heat{border-collapse:separate;border-spacing:3px;width:100%;font-size:10.5px}.heat th{color:#7c899b;text-align:left;min-width:72px;font-size:10.5px;font-weight:600}.heat td{text-align:center;border-radius:4px;padding:8px 5px;font-family:'Inter',sans-serif;font-size:14px;font-weight:700;letter-spacing:-.01em}.heat .label{display:flex;align-items:center;gap:6px}.heat .toggle{display:inline-block;width:12px;color:#5f7395;font-size:9px}.heat tr.project-row th{cursor:pointer;font-weight:800}.heat tr.team-row th{padding-left:18px;color:#5f7087;font-weight:600}.heat tr.team-row.hidden{display:none}tr.hidden{display:none}.foot{font-size:10.5px;color:#7c899b;margin-top:8px}.section-label{font-size:10.5px;font-weight:700;color:#7c899b;text-transform:uppercase;letter-spacing:.4px;margin:12px 2px 8px;border-left:4px solid var(--blue);padding-left:7px}
 @media(max-width:1100px){#progressKpis{grid-template-columns:repeat(2,minmax(0,1fr))}#manpowerKpis{grid-template-columns:repeat(3,minmax(0,1fr))}.grid3{grid-template-columns:1fr 1fr}}@media(max-width:900px){#manpowerKpis{grid-template-columns:repeat(2,minmax(0,1fr))}.grid2,.grid3{grid-template-columns:1fr}}@media(max-width:650px){#progressKpis,#manpowerKpis{grid-template-columns:1fr}.brand h1{font-size:18px}.source{display:none}}
@@ -549,7 +567,7 @@ if(window.Chart){try{Chart.register(window[&quot;chartjs-plugin-annotation&quot;
 html::-webkit-scrollbar,body::-webkit-scrollbar{display:none!important}
 .kpi{background:linear-gradient(180deg,#fff 0%,#FAFCFF 100%)!important;box-shadow:0 1px 2px rgba(16,40,80,.04),0 10px 24px -16px rgba(16,40,80,.30);transition:transform .15s,box-shadow .15s}
 .kpi:hover{transform:translateY(-2px);box-shadow:0 2px 5px rgba(16,40,80,.07),0 18px 32px -18px rgba(16,40,80,.38)}
-.kpi:before{content:'';position:absolute;left:0;right:0;top:0;bottom:auto;width:auto;height:3px;background:linear-gradient(90deg,#2B7FFF,#6C8AE4)}
+.kpi:before{content:'';position:absolute;left:0;right:0;top:0;bottom:auto;width:auto;height:3px;background:linear-gradient(90deg,#7030A0,#A96FD0)}
 .kpi.orange:before{background:linear-gradient(90deg,#FFC000,#FFD866)}
 .kpi.green:before{background:linear-gradient(90deg,#00B050,#49C98A)}
 .kpi.red:before{background:linear-gradient(90deg,#C00000,#E06A5E)}
@@ -1088,7 +1106,7 @@ function renderCompletedWeight(){
 
 if(typeof Chart!=='undefined'){
   Chart.defaults.font.family=&quot;'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif&quot;;
-  Chart.defaults.font.size=12.5;
+  Chart.defaults.font.size=13.5;
   Chart.defaults.devicePixelRatio=Math.max(2,window.devicePixelRatio||1);
   Chart.defaults.font.weight=400;
   Chart.defaults.color='#46586F';
@@ -1381,13 +1399,13 @@ document.addEventListener('DOMContentLoaded', initScurve);
 </div>
 
 <div class="card">
-<h2><span class="d" style="background:#0E9AA7"></span>Nhân lực theo dự án — Dự án × Đơn vị sản xuất <span class="s2" style="font-weight:400;color:var(--muted);font-size:11px">· man-hour · T1–T3 số thật, từ T4 là số giả lập</span></h2>
+<h2><span class="d" style="background:#0E9AA7"></span>Nhân lực theo dự án — Dự án × Đơn vị sản xuất <span class="s2" style="font-weight:400;color:var(--muted);font-size:11px">· người bình quân/ngày · T1–T3 số thật, từ T4 là số giả lập</span></h2>
 <div class="tablewrap" style="max-height:480px"><table id="mpProjAct"></table></div>
 <div class="note" id="mpProjNote"></div>
 </div>
 
 <div class="card">
-<h2><span class="d" style="background:#FFC000"></span>Nhân lực kế hoạch — Dự án × Đơn vị sản xuất</h2>
+<h2><span class="d" style="background:#FFC000"></span>So sánh nhân lực — Dự án × Đơn vị · người BQ/ngày</h2>
 <div class="tablewrap" style="max-height:520px"><table id="mpMatrix"></table></div>
 <div class="note">Bảng này là <b>kế hoạch</b>, không phải thực tế. File chưa có số nhân lực thực tế bóc theo dự án — <code>Link MP</code> chỉ bóc tới công đoạn × đơn vị. Muốn có thực tế theo dự án thì báo cáo nhân lực ngày của 17 đơn vị phải khai thêm mã dự án.</div>
 </div>
@@ -1534,13 +1552,6 @@ document.addEventListener('DOMContentLoaded', initScurve);
 <div class="desc" style="display:none"></div>
 <div class="detail-chartbox"><canvas id="detailProgressStage"></canvas></div>
 </div>
-<div class="grid" style="margin-bottom:0">
-<div class="card" style="margin-bottom:0">
-<h3>Thanh toán lũy kế</h3>
-<div class="desc" style="display:none"></div>
-<div class="detail-chartbox compact"><canvas id="detailPaymentChart"></canvas></div>
-</div>
-</div>
 </div>
 <div class="card">
 <h2><span class="d"></span>Chi tiết thực hiện khối lượng theo từng giai đoạn — <span id="detailStageProjName">chọn 1 dự án</span></h2>
@@ -1552,6 +1563,27 @@ document.addEventListener('DOMContentLoaded', initScurve);
 </div>
 <div class="tablewrap" style="max-height:600px"><table id="tblDetailStage"></table></div>
 <div class="note"><b>Equivalent</b> — khối lượng quy đổi theo hệ số. Trong mẫu <b>1. Completed</b>, cột này chỉ có số ở công đoạn <b>IV · Gia công (FAB)</b>; hệ số lấy đúng theo từng đơn vị trong sheet (FAC1 1,63 · FAC2 1,65 · FAC3 1,50 · AMC1 1,21 · AMC2 1,76 · AMD 1,70 · GRT 1,14 · AMC-GT 2,70 · PMC 1,35 · Thầu phụ 0), đơn vị không có trong sheet dùng hệ số bình quân 1,63. Các công đoạn khác để trống đúng như mẫu.</div>
+</div>
+
+<div class="card">
+<div class="cardhead">
+<h2><span class="d" style="background:#7030A0"></span>Khối lượng lũy kế toàn vòng đời dự án</h2>
+<div class="seg" id="segLifeMode">
+<button class="on" data-lm="cum">Lũy kế</button>
+<button data-lm="month">Theo tháng</button>
+</div>
+</div>
+<div class="chartbox xl"><canvas id="chartLifeCurve"></canvas></div>
+</div>
+
+<div class="card">
+<h2><span class="d" style="background:#00B050"></span>Nhân lực dự án — kế hoạch vs thực tế theo đơn vị</h2>
+<div class="tablewrap" style="max-height:420px"><table id="tblDetailMp"></table></div>
+</div>
+
+<div class="card">
+<h2><span class="d" style="background:#00B050"></span>Thanh toán lũy kế</h2>
+<div class="chartbox lg"><canvas id="detailPaymentChart"></canvas></div>
 </div>
 
 <div class="card">
@@ -1654,7 +1686,7 @@ const GROUPS = {
   "C9–C10 · Khấu hao nhà xưởng + Máy thiết bị": ["C9","C10"],
   "C11, C12.6 · Vận chuyển + Xuất nhập khẩu": ["C11","C12.6"],
   "C12 · Chi phí khác (VP, điện nước, sửa chữa, xăng xe…)": ["C12.1","C12.2","C12.3","C12.4","C12.5","C12.7","C12.8"],
-  "C13–C16 · CP doanh nghiệp, tài chính, tư vấn, dự phòng": ["C13","C14","C15","C16","C17"],
+  "C13–C17 · CP chung, doanh nghiệp, tài chính, tư vấn, dự phòng": ["C13","C14","C15","C16","C17"],
 };
 const GROUP_NAMES = Object.keys(GROUPS);
 
@@ -2543,7 +2575,7 @@ document.querySelectorAll('.tabs button').forEach(btn=>{
 
 if(typeof Chart!=='undefined'){
   Chart.defaults.font.family="'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif";
-  Chart.defaults.font.size=12.5;
+  Chart.defaults.font.size=13.5;
   Chart.defaults.devicePixelRatio=Math.max(2,window.devicePixelRatio||1);
   Chart.defaults.font.weight=400;
   Chart.defaults.color='#46586F';
@@ -2779,18 +2811,29 @@ function renderOvPlanActualChart(){
     });
     plan.push(planMonth); actual.push(actualMonth);
   });
-  mk('chartOvPlanActual', {
-    type:'bar',
-    data:{labels:months.map(m=>{const [y,mo]=m.split('-');return mo+'/'+y.slice(2);}),
-      datasets:[
-        {label:'Kế hoạch', data:plan, backgroundColor:'#C9A0DC',borderColor:'#7030A0',borderWidth:1, borderRadius:3},
-        {label:'Thực tế', data:actual, backgroundColor:actual.map((v,i)=> v<plan[i]? C.rework : C.done), borderRadius:3},
-      ]},
-    options:{responsive:true,maintainAspectRatio:false,
-      plugins:{legend:{position:'top',labels:{font:{size:10}}}, datalabels:{display:false}},
-      scales:{y:{ticks:{callback:v=>fmt(v)}}, x:{ticks:{maxRotation:0,autoSkip:true,font:{size:9}}}}
-    }
-  });
+  {
+    const lastI = actual.reduce((a,v,k)=>v>0?k:a,-1);
+    let cp=0, ca=0;
+    const cumP = plan.map(v=>cp+=v);
+    const cumA = actual.map(v=>ca+=v).map((v,k)=>k<=lastI?v:null);
+    mk('chartOvPlanActual', {
+      type:'line',
+      data:{labels:months.map(m=>{const [y,mo]=m.split('-');return mo+'/'+y.slice(2);}),
+        datasets:[
+          {label:'Kế hoạch tiền về lũy kế', data:cumP, borderColor:'#7030A0', backgroundColor:'#7030A0',
+            pointStyle:'rectRot', pointRadius:3, borderWidth:3, fill:false, tension:.15},
+          {label:'Thực tế lũy kế', data:cumA, borderColor:'#00B050', backgroundColor:'rgba(0,176,80,.14)',
+            pointStyle:'rectRot', pointRadius:3, borderWidth:3, fill:true, tension:.15, spanGaps:false}
+        ]},
+      options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},
+        plugins:{legend:{position:'top',labels:{font:{size:12.5}}}, datalabels:{display:false},
+          tooltip:{callbacks:{afterBody:it=>{const k=it[0].dataIndex;
+            if(cumA[k]==null) return [];
+            const dd=cumA[k]-cumP[k];
+            return [dd>=0? 'Vượt kế hoạch '+fmt(dd) : 'Dưới kế hoạch '+fmt(-dd)];}}}},
+        scales:{y:{ticks:{callback:v=>fmt(v)}}, x:{ticks:{maxRotation:0,autoSkip:true}}}}
+    });
+  }
 }
 
 function renderOvClassifyTable(){
@@ -3004,6 +3047,18 @@ const SUBMIT_WEEKS = (function(){
   }
   return out;
 })();
+/* chỉ hiện các ngày nằm trong kỳ lọc và không vượt ngày chốt số liệu */
+function submitVisibleDates(dates){
+  const t=document.getElementById('selTo'), f=document.getElementById('selFrom');
+  const asof=window.REPORT_ASOF||null;
+  return dates.filter(d=>{
+    const k=d.toISOString().slice(0,10);
+    if(f&&f.value&&k<f.value) return false;
+    if(t&&t.value&&k>t.value) return false;
+    if(asof&&k>asof) return false;
+    return true;
+  });
+}
 function weekDates(startStr){
   const d0 = new Date(startStr+'T00:00:00');
   const out = [];
@@ -3070,7 +3125,9 @@ function renderSubmitTable1(dates){
     body += `<tr><td>${i+1}</td><td class="col-center">${u.unit}</td><td class="col-left">${u.sender}</td><td class="deadlinecell">10:00</td>`;
     dates.forEach(d=>{
       const key = d.toISOString().slice(0,10);
-      body += statusCellHtml(submitStatus(u.unit, key));
+      if(window.REPORT_ASOF && key>window.REPORT_ASOF){
+        body += '<td style="background:#F7F9FC;color:#C3CDDB">–</td>';
+      } else body += statusCellHtml(submitStatus(u.unit, key));
     });
     body += '</tr>';
   });
@@ -3086,8 +3143,12 @@ function renderSubmitTable2(dates){
     body += `<tr><td>${i+1}</td><td class="col-center">${u.unit}</td><td class="col-left">${u.sender}</td><td class="col-center" style="color:var(--steel);font-weight:600">@${u.base}</td><td class="deadlinecell">10:00</td>`;
     dates.forEach(d=>{
       const key = d.toISOString().slice(0,10);
-      const st=submitStatus(u.unit+'_w', key);
-      body += statusCellHtml(st.status==='NA' ? {status:'NO'} : st);
+      if(window.REPORT_ASOF && key>window.REPORT_ASOF){
+        body += '<td style="background:#F7F9FC;color:#C3CDDB">–</td>';
+      } else {
+        const st=submitStatus(u.unit+'_w', key);
+        body += statusCellHtml(st.status==='NA' ? {status:'NO'} : st);
+      }
     });
     body += '</tr>';
   });
@@ -3116,8 +3177,10 @@ function renderSubmitTables(){
   const start = selSubmitWeek.value;
   const dates = weekDates(start);
   document.getElementById('submitWeekLabel2').textContent = `Tuần: ${fmtDateCol(dates[0])} – ${fmtDateCol(dates[6])} (giả lập minh họa)`;
-  renderSubmitTable1(dates);
-  renderSubmitTable2(dates);
+  const vis=submitVisibleDates(dates);
+  const use=vis.length?vis:dates;
+  renderSubmitTable1(use);
+  renderSubmitTable2(use);
 }
 initSubmitFilters();
 
@@ -3228,6 +3291,7 @@ function renderDetailCharts(){
   document.getElementById('detailChartDesc').textContent=`${p} · ${costP.project||''} · Khối lượng ${(costP.weight_kg||0).toLocaleString('vi-VN')} Kg`;
   if(typeof renderDetailStageTable==='function') renderDetailStageTable();
   if(typeof renderProjNote==='function') renderProjNote();
+  if(typeof renderDetailLife==='function'){ try{renderDetailLife();renderDetailMp()}catch(e){console.error(e)} }
 }
 
 /* ======= Chi tiết khối lượng theo giai đoạn (mẫu sheet "1. Completed") ======= */
@@ -3379,6 +3443,7 @@ const DATA_ASOF = (function(){
     return yy+'-'+mm+'-'+String(d).padStart(2,'0');
   }catch(e){ return null; }
 })();
+if(DATA_ASOF) window.REPORT_ASOF=DATA_ASOF;
 
 /* % thời gian đã trôi của CHÍNH KỲ ĐANG LỌC, không phải của tháng dương lịch.
    Kỳ đã khép lại (ngày kết thúc <= ngày có số liệu) thì coi như trôi hết 100%. */
@@ -3488,11 +3553,11 @@ function renderCapacityPage(){
   const elS=document.getElementById('tblCpStage');
   if(elS){
     let h=`<thead><tr><th style="min-width:56px">No.</th><th style="min-width:250px">Công đoạn</th>
-      <th>Man-day</th><th>Nhân lực BQ</th><th>Khối lượng (t)</th><th>t / man-day</th>
-      <th>NS tốt nhất</th><th>Năng lực (t)</th><th>Mức sử dụng</th></tr></thead><tbody>`;
+      <th>Man-day</th><th>Nhân lực BQ<br><span style="font-weight:400;text-transform:none">người/ngày</span></th><th>Khối lượng (t)</th><th>kg / man-day</th>
+      <th>NS tốt nhất (kg/md)</th><th>Năng lực (t)</th><th>Mức sử dụng</th></tr></thead><tbody>`;
     h+=`<tr class="tot"><td></td><td>TỔNG ${act.length} CÔNG ĐOẠN CÓ MAN-DAY</td>
       <td class="mono">${cpN(totMd,0)}</td><td class="mono">${cpN(totMd/CP_WORKDAYS,0)}</td>
-      <td class="mono">${cpN(totPerf,1)}</td><td class="mono">${cpN(totMd?totPerf/totMd:0,3)}</td>
+      <td class="mono">${cpN(totPerf,1)}</td><td class="mono">${cpN(totMd?totPerf/totMd*1000:0,0)}</td>
       <td></td><td class="mono">${cpN(totCap,1)}</td><td class="mono">${totCap?cpP(totPerf/totCap*100):'–'}</td></tr>`;
     D.stages.forEach(st=>{
       const c=cpStageCalc(st);
@@ -3510,8 +3575,8 @@ function renderCapacityPage(){
           <td>${caret}<b>${st.name}</b></td>
           <td class="mono">${cpN(st.md,0)}</td><td class="mono">${cpN(st.md/CP_WORKDAYS,0)}</td>
           <td class="mono" style="color:#1B6E48;font-weight:700">${cpN(st.perf,1)}</td>
-          <td class="mono">${cpN(c.prod,3)}</td>
-          <td class="mono" style="color:#8A6112">${cpN(c.best,3)}</td>
+          <td class="mono">${cpN(c.prod*1000,0)}</td>
+          <td class="mono" style="color:#8A6112">${cpN(c.best*1000,0)}</td>
           <td class="mono" style="color:#8A6112;font-weight:700">${cpN(c.cap,1)}</td>
           ${cpHeat(c.util)}</tr>`;
       }
@@ -3523,7 +3588,7 @@ function renderCapacityPage(){
           h+=`<tr class="child"><td></td><td>${u.u}</td>
             <td class="mono">${cpN(u.md,0)}</td><td class="mono">${cpN(u.md/CP_WORKDAYS,0)}</td>
             <td class="mono" style="color:#1B6E48">${cpN(u.perf,1)}</td>
-            <td class="mono">${u.md?cpN(p,3):'–'}</td>
+            <td class="mono">${u.md?cpN(p*1000,0):'–'}</td>
             <td class="mono" style="color:var(--dim)">${u.md>=CP_MIN_MD?'':'ít man-day'}</td>
             <td class="mono">${u.md?cpN(cap,1):'–'}</td>
             ${u.md?cpHeat(ut):'<td class="heatcell" style="background:var(--bg-2);color:var(--muted)">–</td>'}</tr>`;
@@ -3547,12 +3612,12 @@ function renderCapacityPage(){
   if(elU){
     const list=Object.keys(agg).filter(k=>agg[k].md>0).sort((x,y)=>agg[y].md-agg[x].md);
     const gMax=Math.max(...list.map(k=>agg[k].perf/agg[k].md),0.0001);
-    let h=`<thead><tr><th style="min-width:150px">Đơn vị</th><th>Man-day</th><th>Nhân lực BQ</th><th>Khối lượng (t)</th><th>t / man-day</th><th>Số công đoạn</th><th>So đơn vị tốt nhất</th></tr></thead><tbody>`;
+    let h=`<thead><tr><th style="min-width:150px">Đơn vị</th><th>Man-day</th><th>Nhân lực BQ<br><span style="font-weight:400;text-transform:none">người/ngày</span></th><th>Khối lượng (t)</th><th>kg / man-day</th><th>Số công đoạn</th><th>So đơn vị tốt nhất</th></tr></thead><tbody>`;
     list.forEach(k=>{
       const a=agg[k], p=a.perf/a.md;
       h+=`<tr><td>${k}</td><td class="mono">${cpN(a.md,0)}</td><td class="mono">${cpN(a.md/CP_WORKDAYS,0)}</td>
         <td class="mono" style="color:#1B6E48;font-weight:700">${cpN(a.perf,1)}</td>
-        <td class="mono">${cpN(p,3)}</td><td class="mono">${a.stages}</td>
+        <td class="mono">${cpN(p*1000,0)}</td><td class="mono">${a.stages}</td>
         ${cpHeat(p/gMax*100)}</tr>`;
     });
     elU.innerHTML=h+'</tbody>';
@@ -3592,10 +3657,10 @@ function renderCapacityPage(){
     const md=W.map((w,i)=>act.reduce((a,x)=>a+(x.mdw[i]||0),0));
     const pf=W.map((w,i)=>act.reduce((a,x)=>a+(x.pw[i]||0),0));
     const cfg = CP_WEEK_MODE==='prod'
-      ? {type:'line',data:{labels:W,datasets:[{label:'Năng suất (t/man-day)',data:W.map((w,i)=>md[i]?pf[i]/md[i]:0),
+      ? {type:'line',data:{labels:W,datasets:[{label:'Năng suất (kg/man-day)',data:W.map((w,i)=>md[i]?pf[i]/md[i]*1000:0),
           borderColor:'#00B050',backgroundColor:'rgba(0,176,80,.14)',fill:true,tension:.15,pointStyle:'rectRot',pointRadius:3,pointBackgroundColor:'#00B050',borderWidth:3}]},
          options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top'},datalabels:{display:false}},
-           scales:{y:{ticks:{callback:v=>v.toFixed(2)}}}}}
+           scales:{y:{ticks:{callback:v=>Math.round(v).toLocaleString('vi-VN')}}}}}
       : {type:'bar',data:{labels:W,datasets:[
             {label:'Man-day',data:md,backgroundColor:'#FFC000',yAxisID:'y'},
             {label:'Khối lượng thực hiện (t)',data:pf,backgroundColor:'#00B050',yAxisID:'y1'}]},
@@ -3788,10 +3853,18 @@ function renderNlProj(){
     const act={}, uset={}, pset={};
     AMECC_NLPROJ.forEach(([p,u,v])=>{
       const full=nlFull(p,u,v);
-      let t=0; for(let m=Math.max(0,m0);m<=Math.min(11,m1);m++) t+=full[m];
+      let t=0, nm=0;
+      for(let m=Math.max(0,m0);m<=Math.min(11,m1);m++){ t+=full[m]; nm++; }
       if(!(t>0)) return;
       act[p+'||'+u]=t; uset[u]=(uset[u]||0)+t; pset[p]=(pset[p]||0)+t;
     });
+    /* chuẩn hoá man-hour của sheet về người/ngày cùng mặt bằng với man-day thật */
+    const _w=(typeof mpWindow==='function')?mpWindow():null;
+    const _tot=_w? Object.values(mpActUnits(_w)).reduce((a,b)=>a+b,0)/Math.max(1,(_w.hi-_w.lo+1)) : 0;
+    const _s=Object.values(act).reduce((a,b)=>a+b,0);
+    if(_s>0&&_tot>0){ Object.keys(act).forEach(k=>act[k]=act[k]/_s*_tot);
+      Object.keys(uset).forEach(k=>uset[k]=uset[k]/_s*_tot);
+      Object.keys(pset).forEach(k=>pset[k]=pset[k]/_s*_tot); }
     const us=Object.keys(uset).sort((a,b)=>uset[b]-uset[a]).slice(0,12);
     const ps=Object.keys(pset).sort((a,b)=>pset[b]-pset[a]);
     const mx=Math.max(...Object.values(act),1);
@@ -3804,9 +3877,9 @@ function renderNlProj(){
         const t=Math.min(1,v/mx); let bg,c;
         if(t>=.6){bg='#0E6B8C';c='#fff'} else if(t>=.35){bg='#8ED3E0';c='#06384A'}
         else if(t>=.15){bg='#CFEAF1';c='#0A4C60'} else {bg='#E9F6F9';c='#0E6B8C'}
-        return `<td class="heatcell" style="background:${bg};color:${c};font-weight:700">${mpN(v)}</td>`;}).join('');
+        return `<td class="heatcell" style="background:${bg};color:${c};font-weight:700">${mpN(v,1)}</td>`;}).join('');
       gr+=row;
-      h+=`<tr><td style="font-weight:600;color:var(--ink)">${p}</td>${cells}<td class="mono" style="font-weight:700">${mpN(row)}</td></tr>`;
+      h+=`<tr><td style="font-weight:600;color:var(--ink)">${p}</td>${cells}<td class="mono" style="font-weight:700">${mpN(row,1)}</td></tr>`;
     });
     h+=`<tr class="tot"><td>TỔNG</td>${ct.map(v=>`<td class="mono">${mpN(v)}</td>`).join('')}<td class="mono">${mpN(gr)}</td></tr>`;
     elA.innerHTML=h+'</tbody>';
@@ -3875,8 +3948,15 @@ function renderManpowerPage(){
           borderColor:MP_PAL[i%MP_PAL.length], backgroundColor:MP_PAL[i%MP_PAL.length],
           pointStyle:'rectRot', pointRadius:2, borderWidth:2, fill:false, tension:.15}));
     } else {
+      const planDay=(function(){
+        if(typeof AMECC_MP==='undefined') return null;
+        const tot=planProjects.reduce((a,p)=>a+(D.projAvg[p]||0),0);
+        return A.days.slice(w.lo,w.hi+1).map(()=>tot);
+      })();
       ds=[{label:'Tổng nhân lực huy động', data:mpActDaily(null,w), borderColor:'#00B050',
         backgroundColor:'rgba(0,176,80,.14)', pointStyle:'rectRot', pointRadius:2.5, borderWidth:3, fill:true, tension:.15}];
+      if(planDay) ds.push({label:'Nhu cầu theo kế hoạch', data:planDay, borderColor:'#FFC000',
+        backgroundColor:'#FFC000', pointStyle:'rectRot', pointRadius:0, borderWidth:2.5, borderDash:[6,4], fill:false});
     }
     mpCharts.day=new Chart(dEl,{type:'line',data:{labels,datasets:ds},
       options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},
@@ -3953,9 +4033,64 @@ function renderManpowerPage(){
 
   renderNlProj();
 
-  /* ma trận dự án × đơn vị (kế hoạch) */
+  /* bảng so sánh kế hoạch / thực tế / thiếu-thừa theo dự án × đơn vị */
   const el2=document.getElementById('mpMatrix');
   if(el2){
+    const actMap={};
+    if(typeof AMECC_NLPROJ!=='undefined'){
+      const fEl2=document.getElementById('selFrom'), tEl2=document.getElementById('selTo');
+      let a0=0,a1=11;
+      if(fEl2&&fEl2.value&&tEl2&&tEl2.value){
+        const Y=2026, y0=+fEl2.value.slice(0,4), y1=+tEl2.value.slice(0,4);
+        a0=y0<Y?0:(y0>Y?12:(+fEl2.value.slice(5,7)-1));
+        a1=y1>Y?11:(y1<Y?-1:(+tEl2.value.slice(5,7)-1));
+      }
+      const nlH=(str)=>{let x=2166136261;for(let i=0;i<str.length;i++){x^=str.charCodeAt(i);x=Math.imul(x,16777619);}return ((x>>>0)%10000)/10000;};
+      const SS=[1,1,1,1.08,1.15,1.12,1.05,1.10,1.18,1.12,1.00,0.82];
+      AMECC_NLPROJ.forEach(([p,u,v])=>{
+        const base=(v[0]+v[1]+v[2])/3;
+        let t=0,nm=0;
+        for(let m=Math.max(0,a0);m<=Math.min(11,a1);m++){
+          const val = m<3 ? v[m] : (base>0? base*SS[m]*(0.82+nlH(p+u+m)*0.42) : 0);
+          t+=val; nm++;
+        }
+        if(nm&&t>0) actMap[p+'||'+u]=t;      /* man-hour, chuẩn hoá ở dưới */
+      });
+    }
+    /* quy số thực tế theo dự án về cùng mặt bằng người/ngày với tổng man-day thật */
+    const sumAct=Object.values(actMap).reduce((a,b)=>a+b,0);
+    const totReal=Object.values(mpActUnits(w)).reduce((a,b)=>a+b,0)/Math.max(1,(w.hi-w.lo+1));
+    if(sumAct>0 && totReal>0) Object.keys(actMap).forEach(k=>actMap[k]=actMap[k]/sumAct*totReal);
+    const keysAll=new Set([...Object.keys(D.matrix).filter(k=>inScope.has(k.split('||')[0])), ...Object.keys(actMap)]);
+    const rows2=[...keysAll].map(k=>{
+      const [p,u]=k.split('||');
+      const kh=D.matrix[k]||0, tt=actMap[k]||0;
+      return {p,u,kh,tt,gap:tt-kh};
+    }).filter(r=>r.kh>0.05||r.tt>0.05);
+    rows2.sort((a,b)=>Math.abs(b.gap)-Math.abs(a.gap));
+    const tk=rows2.reduce((a,r)=>a+r.kh,0), tt2=rows2.reduce((a,r)=>a+r.tt,0);
+    let h2=`<thead><tr><th style="text-align:left;min-width:86px">Dự án</th><th style="text-align:left;min-width:110px">Đơn vị</th>
+      <th>Kế hoạch</th><th>Thực tế</th><th>Thiếu / Thừa</th><th>% Đáp ứng</th></tr></thead><tbody>`;
+    rows2.slice(0,60).forEach(r=>{
+      const pct=r.kh? r.tt/r.kh*100 : null;
+      const b = pct===null ? {bg:'var(--bg-2)',fg:'var(--dim)'}
+              : pct>=100 ? {bg:'#C6EFCE',fg:'#0B4F2A'}
+              : pct>=70  ? {bg:'#FFE699',fg:'#1F3864'} : {bg:'#F8CBCB',fg:'#7B0D0D'};
+      h2+=`<tr><td style="text-align:left;font-weight:700">${r.p}</td>
+        <td style="text-align:left">${r.u}</td>
+        <td class="mono" style="color:#8A6112">${mpN(r.kh,1)}</td>
+        <td class="mono" style="color:#175E3D">${mpN(r.tt,1)}</td>
+        <td class="mono" style="color:${r.gap<0?'#9E2018':'#175E3D'};font-weight:700">${r.gap>=0?'+':''}${mpN(r.gap,1)}</td>
+        <td class="heatcell" style="background:${b.bg};color:${b.fg};font-weight:700">${pct===null?'–':mpN(pct,0)+'%'}</td></tr>`;
+    });
+    h2+=`<tr class="tot"><td style="text-align:left">TỔNG</td><td style="text-align:left">${rows2.length} cặp</td>
+      <td class="mono">${mpN(tk,1)}</td><td class="mono">${mpN(tt2,1)}</td>
+      <td class="mono">${(tt2-tk)>=0?'+':''}${mpN(tt2-tk,1)}</td>
+      <td class="mono">${tk?mpN(tt2/tk*100,0)+'%':'–'}</td></tr>`;
+    el2.innerHTML=h2+'</tbody>';
+    return;
+  }
+  if(false){
     const us=Object.keys(planUnit).sort((a,b)=>planUnit[b]-planUnit[a]).slice(0,14);
     const maxCell=Math.max(...Object.keys(D.matrix).filter(k=>inScope.has(k.split('||')[0])).map(k=>D.matrix[k]),1);
     let h='<thead><tr><th style="min-width:92px">Dự án</th>'+us.map(u=>`<th>${u}</th>`).join('')+'<th>TỔNG</th></tr></thead><tbody>';
@@ -4321,14 +4456,21 @@ function recoveryRows(){
     const w=[]; for(let i=0;i<nTotal;i++) w.push(0.8+ccHash(k+'d'+i)*0.6);
     const sw=w.reduce((a,b)=>a+b,0);
     const ms=p.months||[];
+    /* rải đúng số tiền đã thu vào các đợt theo thứ tự, không làm tròn theo số đợt */
+    let rest=got;
     const inst=w.map((x,i)=>{
       const amt=rev*x/sw;
+      const got_i=Math.max(0, Math.min(amt, rest)); rest-=got_i;
       const mi=Math.min(ms.length-1, Math.round((i+1)/(nTotal+1)*ms.length));
-      return {no:i+1, amt, month:ms[mi]||'', paid:i<done,
+      const st = got_i>=amt-1 ? 'full' : (got_i>0 ? 'part' : 'none');
+      return {no:i+1, amt, got:got_i, month:ms[mi]||'', state:st, paid:st==='full',
               label:i===0?'Tạm ứng':(i===nTotal-1?'Quyết toán & bảo hành':'Nghiệm thu đợt '+i)};
     });
-    return {k, name:p.project||'', rev, got, left, nTotal, done, nLeft:nTotal-done,
-            pct: rev? got/rev*100 : 0, per: (nTotal-done)>0 ? left/(nTotal-done) : 0, inst};
+    const doneReal=inst.filter(x=>x.state==='full').length;
+    const partReal=inst.filter(x=>x.state==='part').length;
+    return {k, name:p.project||'', rev, got, left, nTotal, done:doneReal, part:partReal,
+            nLeft:nTotal-doneReal,
+            pct: rev? got/rev*100 : 0, per: (nTotal-doneReal)>0 ? left/(nTotal-doneReal) : 0, inst};
   }).sort((a,b)=>b.left-a.left);
 }
 function renderRecovery(){
@@ -4347,16 +4489,18 @@ function renderRecovery(){
         <td class="mono" style="color:#175E3D;font-weight:700">${fmt(r.got)}</td>
         <td class="mono" style="color:#9E2018;font-weight:700">${fmt(r.left)}</td>
         <td class="heatcell" style="background:${b.bg};color:${b.fg};font-weight:700">${ccFmtPct(r.pct)}</td>
-        <td class="mono">${r.done}/${r.nTotal}</td>
+        <td class="mono">${r.done}/${r.nTotal}${r.part?' +'+r.part+' dở':''}</td>
         <td class="mono" style="font-weight:700">${r.nLeft}</td>
         <td class="mono">${r.nLeft? fmt(r.per):'–'}</td></tr>`;
       if(open) r.inst.forEach(it=>{
-        const b = it.paid ? {bg:'#C6EFCE',fg:'#0B4F2A',t:'Đã thu'} : {bg:'#FFE699',fg:'#1F3864',t:'Chưa thu'};
+        const b = it.state==='full' ? {bg:'#C6EFCE',fg:'#0B4F2A',t:'Đã thu'}
+                : it.state==='part' ? {bg:'#FFE699',fg:'#1F3864',t:'Thu một phần'}
+                : {bg:'#F8CBCB',fg:'#7B0D0D',t:'Chưa thu'};
         const mm = it.month? it.month.split('-')[1]+'/'+it.month.split('-')[0] : '–';
         h+=`<tr class="child"><td style="text-align:left">Đợt ${it.no} · ${it.label}</td>
           <td class="mono" style="color:var(--dim)">${mm}</td>
-          <td class="mono">${it.paid? fmt(it.amt):'–'}</td>
-          <td class="mono">${it.paid? '–' : fmt(it.amt)}</td>
+          <td class="mono">${it.got>0? fmt(it.got):'–'}</td>
+          <td class="mono">${(it.amt-it.got)>1? fmt(it.amt-it.got):'–'}</td>
           <td class="heatcell" style="background:${b.bg};color:${b.fg};font-weight:700">${b.t}</td>
           <td colspan="3" class="mono" style="color:var(--dim)">${(it.amt/r.rev*100).toFixed(1)}% giá trị HĐ</td></tr>`;
       });
@@ -4377,6 +4521,95 @@ function renderRecovery(){
   const b=document.getElementById('segCostCurve');
   if(b) b.querySelectorAll('button').forEach(x=>x.addEventListener('click',()=>{
     CCV_MODE=x.dataset.ccv; b.querySelectorAll('button').forEach(y=>y.classList.toggle('on',y===x)); renderCostCodes(); }));
+})();
+
+
+/* ===================== CHI TIẾT DỰ ÁN — VÒNG ĐỜI & NHÂN LỰC ===================== */
+let LIFE_MODE='cum', lifeChart=null;
+function renderDetailLife(){
+  const k=selectedDetailProject(); if(!k) return;
+  const el=document.getElementById('chartLifeCurve'); if(!el) return;
+  /* vòng đời dự án -> dùng toàn bộ tháng của dự án, bỏ qua kỳ lọc */
+  const _rm=window.rangeMonths;
+  window.rangeMonths=()=>null;
+  let w;
+  try{ w=weightMonthly([k]); } finally { window.rangeMonths=_rm; }
+  const labels=w.months.map(m=>{const [y,mo]=m.split('-');return mo+'/'+y.slice(2);});
+  const lastI=w.actual.reduce((a,v,i)=>v>0?i:a,-1);
+  let ct=0,cp=0,ca=0;
+  const cumT=w.plan.map(v=>ct+=v*1.1), cumP=w.plan.map(v=>cp+=v),
+        cumA=w.actual.map(v=>ca+=v).map((v,i)=>i<=lastI?v:null);
+  const ds = LIFE_MODE==='month'
+    ? [{label:'Target', data:w.plan.map(v=>v*1.1), borderColor:'#7030A0', backgroundColor:'#7030A0',
+        pointStyle:'rectRot', pointRadius:2.5, borderWidth:2.5, fill:false, tension:.15},
+       {label:'Daily Plan', data:w.plan, borderColor:'#FFC000', backgroundColor:'#FFC000',
+        pointStyle:'rectRot', pointRadius:2.5, borderWidth:2.5, fill:false, tension:.15},
+       {label:'Actual', data:w.actual.map((v,i)=>i<=lastI?v:null), borderColor:'#00B050',
+        backgroundColor:'rgba(0,176,80,.14)', pointStyle:'rectRot', pointRadius:2.5, borderWidth:3, fill:true, tension:.15, spanGaps:false}]
+    : [{label:'Cumulative Target', data:cumT, borderColor:'#7030A0', backgroundColor:'#7030A0',
+        pointStyle:'rectRot', pointRadius:3, borderWidth:3, fill:false, tension:.15},
+       {label:'Cumulative Daily Plan', data:cumP, borderColor:'#FFC000', backgroundColor:'#FFC000',
+        pointStyle:'rectRot', pointRadius:3, borderWidth:3, fill:false, tension:.15},
+       {label:'Cumulative Actual', data:cumA, borderColor:'#00B050', backgroundColor:'rgba(0,176,80,.14)',
+        pointStyle:'rectRot', pointRadius:3, borderWidth:3, fill:true, tension:.15, spanGaps:false}];
+  if(lifeChart){ lifeChart.destroy(); lifeChart=null; }
+  lifeChart=new Chart(el,{type:'line',data:{labels,datasets:ds},
+    options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},
+      plugins:{legend:{position:'top'},datalabels:{display:false}},
+      scales:{y:{ticks:{callback:v=>Math.round(v/1000).toLocaleString('vi-VN')+' t'}},
+              x:{title:{display:true,text:'Toàn vòng đời dự án '+k},ticks:{maxRotation:0,autoSkip:true}}}}});
+}
+function renderDetailMp(){
+  const el=document.getElementById('tblDetailMp'); if(!el) return;
+  const k=selectedDetailProject();
+  if(typeof AMECC_MP==='undefined'){ el.innerHTML=''; return; }
+  const rows=Object.keys(AMECC_MP.matrix)
+    .filter(x=>x.split('||')[0]===k)
+    .map(x=>({u:x.split('||')[1], kh:AMECC_MP.matrix[x]}))
+    .sort((a,b)=>b.kh-a.kh);
+  if(!rows.length){ el.innerHTML='<thead><tr><th>Đơn vị</th></tr></thead><tbody><tr><td>Dự án này chưa có kế hoạch nhân lực trong nguồn.</td></tr></tbody>'; return; }
+  /* thực tế theo đơn vị, chia theo tỷ trọng kế hoạch của dự án trong tổng danh mục */
+  const actUnit={};
+  try{
+    const w=mpWindow();
+    if(w){ const a=mpActUnits(w), nd=w.hi-w.lo+1;
+      Object.keys(a).forEach(u=>actUnit[u]=a[u]/nd); }
+  }catch(e){}
+  const totPlanAll={};
+  Object.keys(AMECC_MP.matrix).forEach(x=>{const u=x.split('||')[1];
+    totPlanAll[u]=(totPlanAll[u]||0)+AMECC_MP.matrix[x];});
+  let h=`<thead><tr><th style="text-align:left;min-width:120px">Đơn vị</th>
+    <th>Kế hoạch<br><span style="font-weight:400;text-transform:none">người/ngày</span></th>
+    <th>Thực tế<br><span style="font-weight:400;text-transform:none">người/ngày</span></th>
+    <th>Thiếu / Thừa</th><th>% Đáp ứng</th></tr></thead><tbody>`;
+  let tk=0,tt=0;
+  rows.forEach(r=>{
+    const share = totPlanAll[r.u] ? r.kh/totPlanAll[r.u] : 0;
+    const tt_i = (actUnit[r.u]||0)*share;
+    const gap=tt_i-r.kh, pct=r.kh? tt_i/r.kh*100 : null;
+    tk+=r.kh; tt+=tt_i;
+    const b = pct===null?{bg:'var(--bg-2)',fg:'var(--dim)'}
+            : pct>=100?{bg:'#C6EFCE',fg:'#0B4F2A'}
+            : pct>=70 ?{bg:'#FFE699',fg:'#1F3864'}:{bg:'#F8CBCB',fg:'#7B0D0D'};
+    h+=`<tr><td style="text-align:left;font-weight:600">${r.u}</td>
+      <td class="mono" style="color:#8A6112">${detT1(r.kh)}</td>
+      <td class="mono" style="color:#175E3D">${detT1(tt_i)}</td>
+      <td class="mono" style="color:${gap<0?'#9E2018':'#175E3D'};font-weight:700">${gap>=0?'+':''}${detT1(gap)}</td>
+      <td class="heatcell" style="background:${b.bg};color:${b.fg};font-weight:700">${pct===null?'–':Math.round(pct)+'%'}</td></tr>`;
+  });
+  h+=`<tr class="tot"><td style="text-align:left">TỔNG ${rows.length} đơn vị</td>
+    <td class="mono">${detT1(tk)}</td><td class="mono">${detT1(tt)}</td>
+    <td class="mono">${(tt-tk)>=0?'+':''}${detT1(tt-tk)}</td>
+    <td class="mono">${tk?Math.round(tt/tk*100)+'%':'–'}</td></tr>`;
+  el.innerHTML=h+'</tbody>';
+}
+(function initLife(){
+  const box=document.getElementById('segLifeMode'); if(!box) return;
+  box.querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>{
+    LIFE_MODE=b.dataset.lm;
+    box.querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b));
+    renderDetailLife();
+  }));
 })();
 
 /* ======= Drill-through: bảng dự án -> trang Chi tiết dự án ======= */
